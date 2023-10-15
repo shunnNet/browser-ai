@@ -25,7 +25,7 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "vue"],
+  plugins: ["@typescript-eslint", "import", "vue"],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
   },
