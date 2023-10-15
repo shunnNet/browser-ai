@@ -1,2 +1,4 @@
-# 
-https://stackoverflow.com/questions/45267500/exclude-node-modules-from-problems
+# browser-ai
+Please check the concept demo [`ai-vue-concept`]`https://github.com/shunnNet/ai-vue-concept`
+
+Working on it...
