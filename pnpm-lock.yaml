@@ -36,6 +36,18 @@ importers:
         specifier: ^5.0.2
         version: 5.2.2
 
+  packages/ai-operators:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.2
+        version: 5.2.2
+      vite:
+        specifier: ^4.4.5
+        version: 4.4.11(@types/node@20.8.6)
+      vite-plugin-dts:
+        specifier: ^3.6.0
+        version: 3.6.0(typescript@5.2.2)(vite@4.4.11)
+
   packages/ai-vue:
     dependencies:
       vue:
@@ -60,6 +72,12 @@ importers:
 
   playground/vite:
     dependencies:
+      '@browser-ai/ai-operators':
+        specifier: workspace:^
+        version: link:../../packages/ai-operators
+      '@browser-ai/ai-vue':
+        specifier: workspace:^
+        version: link:../../packages/ai-vue
       vue:
         specifier: ^3.3.4
         version: 3.3.4

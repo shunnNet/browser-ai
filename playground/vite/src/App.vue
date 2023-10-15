@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue"
+import agentOperators from "@browser-ai/ai-operators"
+import aiVue from "@browser-ai/ai-vue"
+
+console.log(agentOperators)
+console.log(aiVue)
 </script>
 
 <template>
