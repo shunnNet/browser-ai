@@ -1,3 +1,1 @@
-export default {
-  name: "ai-operators",
-}
+export * from "./Agent"
