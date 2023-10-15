@@ -1,0 +1,22 @@
+{
+  "name": "ai-vue",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "node scripts/prepare.js",
+    "dev": "pnpm -r --parallel dev"
+  },
+  "keywords": [],
+  "author": "shunnNet <wendell20904102@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "typescript": "^5.0.2"
+  }
+}
