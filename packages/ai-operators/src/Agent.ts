@@ -1,3 +1,5 @@
+import { Tool } from "./Tool"
+
 export type AgentClient = (prompt: string) => Promise<string>
 
 export class Agent {
@@ -64,23 +66,36 @@ ${this.content}
 
     return message
   }
+
+  async useTools(tools: Tool[]) {
+    const functionPrompts = tools
+      .map((t, index) => {
+        return `---function ${index + 1}---
+Function name: ${t.name}
+Function JSON Schema: ${JSON.stringify(t.schema)}
+`
+      })
+      .join("\n\n")
+    const prompt = `I need you choose 1 function and pass args for fulfill the request based on following content. You MUST follow the JSON Schema to pass args to function.
+  
+---question---
+
+---content---
+${this.content}
+
+${functionPrompts}
+
+---your anwser---
+{
+  "function": <function-name-to-be-call>
+  "args": <function-args>
+}`
+    const message = await this.client(prompt)
+    try {
+      return JSON.parse(message)
+    } catch (e) {
+      return { error: e.message }
+    }
+    return message
+  }
 }
-
-// "use strict";
-// Object.defineProperty(exports, "__esModule", { value: true });
-// exports.SUFFIX = exports.FORMAT_INSTRUCTIONS = exports.PREFIX = void 0;
-// exports.PREFIX = `Answer the following questions as best you can. You have access to the following tools:`;
-// exports.FORMAT_INSTRUCTIONS = `Use the following format in your response:
-
-// Question: the input question you must answer
-// Thought: you should always think about what to do
-// Action: the action to take, should be one of [{tool_names}]
-// Action Input: the input to the action
-// Observation: the result of the action
-// ... (this Thought/Action/Action Input/Observation can repeat N times)
-// Thought: I now know the final answer
-// Final Answer: the final answer to the original input question`;
-// exports.SUFFIX = `Begin!
-
-// Question: {input}
-// Thought:{agent_scratchpad}`;
