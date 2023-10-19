@@ -14,4 +14,22 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
+  build: {
+    copyPublicDir: false,
+    lib: {
+      entry: resolve(__dirname, "src/main.ts"),
+      name: "test",
+      fileName: "index",
+    },
+    rollupOptions: {
+      external: ["vue"],
+      output: {
+        // Provide global variables to use in the UMD build
+        // for externalized deps
+        globals: {
+          vue: "Vue",
+        },
+      },
+    },
+  },
 })
