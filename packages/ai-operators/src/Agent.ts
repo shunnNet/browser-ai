@@ -14,19 +14,23 @@ export class Agent {
     this.content = content
   }
 
-  computePrompt(logicMessage: string) {
+  computePrompt(logicMessage: string, appendix?: string) {
     return `I need you anwser the question based on following content. ${logicMessage}
 
 ---content---
 ${this.content}
+
+${appendix || ""}
 
 ---your anwser---
 
 `
   }
 
-  async logic(logicMessage: string) {
-    const message = await this.client(this.computePrompt(logicMessage))
+  async logic(logicMessage: string, appendix?: string) {
+    const message = await this.client(
+      this.computePrompt(logicMessage, appendix),
+    )
     return message
   }
 

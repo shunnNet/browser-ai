@@ -1,2 +1,5 @@
 export * from "./Agent"
 export { Tool } from "./Tool"
+export * from "./ElementStore"
+export * from "./BrowserNavigationAgent"
+export * from "./PageStatus"
