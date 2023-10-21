@@ -98,7 +98,11 @@ ${functionPrompts}
     try {
       return JSON.parse(message)
     } catch (e) {
-      return { error: e.message }
+      if (e instanceof Error) {
+        return { error: e.message }
+      } else {
+        return { error: "Unknown Error" }
+      }
     }
     return message
   }

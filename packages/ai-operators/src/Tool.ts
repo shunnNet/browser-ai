@@ -4,10 +4,13 @@ type ToolSchema = {
   parameters: {
     type: "object"
     properties: Record<string, any>
-  }
+  } & Record<string, any>
 } & Record<string, any>
 
-type ToolFunction = () => { data: any; message: string }
+type ToolFunction = (args: Record<string, any>) => {
+  data: any
+  message: string
+}
 type ToolValidateFunction = (args: any) => boolean
 
 export class Tool {
