@@ -1,3 +1,8 @@
-export default {
-  name: "ai-vue2",
-}
+export * from "./useVueAgent"
+export * from "./VueAgent"
+export * from "./plugin"
+export * from "./vAi"
+export * from "./connectVueRouter"
+export * from "./useVueRouterPending"
+export * from "./RouteStatus"
+export * from "./vueElementStore"
