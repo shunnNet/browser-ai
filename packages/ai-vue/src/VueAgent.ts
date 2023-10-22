@@ -5,6 +5,10 @@ import {
 } from "@browser-ai/ai-operators"
 import { vueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
+import {
+  computeFormatHint,
+  ComponentOption,
+} from "@crazydos/vue-llm-rich-message"
 
 export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
   protected routeStatus: RouteStatus
@@ -25,5 +29,9 @@ export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
     )
 
     return id ? this.routeStatus.getRouteById(id) : undefined
+  }
+
+  computeComponentFormatHint(components: ComponentOption | ComponentOption[]) {
+    return computeFormatHint(components)
   }
 }
