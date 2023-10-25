@@ -14,18 +14,18 @@ export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
     this.elementStore = elementStore
     this.pageStatus = pageStatus
   }
-  async whichElementIs(description: string) {
+  async whichElement(description: string) {
     const id = await this.logic(
-      `Which element is ${description}? You must answer by only element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
+      `Which element ${description}? You must answer by only element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
 
     return id && this.elementStore.getElementById(id)
   }
 
-  async whichElementAre(description: string) {
+  async whichElements(description: string) {
     const idsString = await this.logic(
-      `Which elements are ${description}? You must answer by only element ids like JSON array '[1, 2,...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
+      `Which elements ${description}? You must answer by only element ids like JSON array '[1, 2,...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
     try {
