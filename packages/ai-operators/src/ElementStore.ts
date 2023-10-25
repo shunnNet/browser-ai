@@ -11,9 +11,9 @@ export class ElementStore<T extends ElementStoreItem> {
 
   computePrompt(): string {
     return Object.values(this.elements)
-      .map((item, i) => {
-        return `---Element ${i + 1}---        
-Id: ${item.id}
+      .map((item) => {
+        return `---Element id:${item.id}---        
+Name: ${item.id}
 Description: ${item.description}
 `
       })

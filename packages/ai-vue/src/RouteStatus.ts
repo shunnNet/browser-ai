@@ -17,8 +17,8 @@ export class RouteStatus {
 
   computeRoutesPrompt() {
     return this.routes
-      .map((r, index) => {
-        return `---available page: ${index + 1}---
+      .map((r) => {
+        return `---available page id: ${r.id}---
 Id: ${r.id}
 Title: ${r.title}
 Description: ${r.description}
