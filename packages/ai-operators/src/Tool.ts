@@ -1,4 +1,4 @@
-type ToolSchema = {
+export type ToolSchema = {
   name: string
   description: string
   parameters: {
@@ -7,11 +7,11 @@ type ToolSchema = {
   } & Record<string, any>
 } & Record<string, any>
 
-type ToolFunction = (args: Record<string, any>) => {
+export type ToolFunction = (args: Record<string, any>) => {
   data: any
   message: string
 }
-type ToolValidateFunction = (args: any) => boolean
+export type ToolValidateFunction = (args: any) => boolean
 
 export class Tool {
   public name: string
