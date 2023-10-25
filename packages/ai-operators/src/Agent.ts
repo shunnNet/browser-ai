@@ -1,13 +1,19 @@
 import { Tool } from "./Tool"
 
-export type AgentClient = (prompt: string) => Promise<string>
+export type AgentClient = (message: {
+  prompt: string
+  systemMessage?: string
+}) => Promise<string>
 
 export class Agent {
   public content: string
+  public systemMessage: string
   public client: AgentClient
+
   constructor(client: AgentClient) {
     this.client = client
     this.content = ""
+    this.systemMessage = ""
   }
 
   check(content: string) {
@@ -28,9 +34,10 @@ ${appendix || ""}
   }
 
   async logic(logicMessage: string, appendix?: string) {
-    const message = await this.client(
-      this.computePrompt(logicMessage, appendix),
-    )
+    const message = await this.client({
+      prompt: this.computePrompt(logicMessage, appendix),
+      systemMessage: this.systemMessage,
+    })
     return message
   }
 
@@ -94,7 +101,7 @@ ${functionPrompts}
   "function": <function-name-to-be-call>
   "args": <function-args>
 }`
-    const message = await this.client(prompt)
+    const message = await this.client({ prompt })
     try {
       return JSON.parse(message)
     } catch (e) {
