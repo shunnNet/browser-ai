@@ -23,10 +23,13 @@ export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
   }
 
   async whichRoute(description: string): Promise<Route | undefined> {
-    const id = await this.logic(
-      `Which route ${description}? You must answer by only route id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
+    let id = await this.logic(
+      `Which route ${description}? You must answer by only route id with no other words. If no appropriate route, say 'no', and the other agent will navigate user to other place.`,
       this.routeStatus.computeRoutesPrompt(),
     )
+    if (!this.routeStatus.getRouteById(id)) {
+      id = await this.correctionByChoices(id, this.routeStatus.getRouteIds())
+    }
 
     return id ? this.routeStatus.getRouteById(id) : undefined
   }

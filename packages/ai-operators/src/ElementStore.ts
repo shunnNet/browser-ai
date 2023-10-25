@@ -20,6 +20,10 @@ Description: ${item.description}
       .join("\n\n")
   }
 
+  getElementIds() {
+    return Object.keys(this.elements)
+  }
+
   getElementById(id: string): T {
     return this.elements[id]
   }

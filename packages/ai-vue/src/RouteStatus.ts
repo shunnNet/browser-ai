@@ -55,6 +55,10 @@ Description: ${this.currentPageRoute.description}
   getRouteById(id: string) {
     return this.routes.find((route) => route.id === id)
   }
+
+  getRouteIds() {
+    return this.routes.map((r) => r.id)
+  }
 }
 
 export const routeStatus = new RouteStatus()

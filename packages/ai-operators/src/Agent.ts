@@ -42,9 +42,13 @@ ${appendix || ""}
   }
 
   async does(purpose: string) {
-    const message = await this.logic(
+    let message = await this.logic(
       `Does ${purpose} ? Answer by "yes" or "no" with no other words. If you dont know, answer "none"`,
     )
+    const choices = ["yes", "no", "none"]
+    if (!choices.includes(message)) {
+      message = await this.correctionByChoices(message, choices)
+    }
 
     if (message === "yes") {
       return true
@@ -55,9 +59,14 @@ ${appendix || ""}
     }
   }
   async is(statement: string) {
-    const message = await this.logic(
+    let message = await this.logic(
       `Is ${statement} ? Answer by "yes" or "no" with no other words. If you dont know, answer "none"`,
     )
+
+    const choices = ["yes", "no", "none"]
+    if (!choices.includes(message)) {
+      message = await this.correctionByChoices(message, choices)
+    }
 
     if (message === "yes") {
       return true
@@ -69,11 +78,14 @@ ${appendix || ""}
   }
 
   async whichIs(purpose: string, choices: string[]) {
-    const message = await this.logic(
+    let message = await this.logic(
       `Which one is ${purpose} ? You must answer with one of these: ${choices
         .map((c) => `"${c}"`)
         .join(",")} with no other words. If you don't know, anwser "none"`,
     )
+    if (!choices.includes(message)) {
+      message = await this.correctionByChoices(message, choices)
+    }
 
     return message
   }
@@ -111,6 +123,55 @@ ${functionPrompts}
         return { error: "Unknown Error" }
       }
     }
-    return message
+  }
+
+  async correction(wrong: string, correct: string) {
+    return await this.client({
+      prompt: `You gave an answer with wrong format, I need you correct the answer to the correct format with no other words.
+
+---previous anwser---
+${wrong}
+
+---correct format---
+${correct}
+
+---anwser with correct format---
+
+`,
+    })
+  }
+  async correctionByChoices(wrong: string, choices: string[]) {
+    return this.correction(
+      wrong,
+      `Anwser with one of the following item with no other words:
+${choices.join("\n")}`,
+    )
+  }
+
+  async correctionToJSON(wrong: string, hint?: string) {
+    let correct = "The answer should be valid JSON with no other words"
+    if (hint) {
+      correct += `
+---example---
+${hint}`
+    }
+
+    return this.correction(wrong, correct)
+  }
+
+  async correctionWithSentencesRequired(wrong: string, sentences: string[]) {
+    return await this.client({
+      prompt: `You gave an unexpected answer, the anwser should include 1 or more sentences. I need you fill in the sentences to the previous answer in appropriate place, or fix it if the sentence in anwser is broken, with no change to other part of anwser.
+
+---previous anwser---
+${wrong}
+
+---sentences you need fill in(1 or more)---
+${sentences.join("\n")}
+
+---anwser with correct format---
+
+`,
+    })
   }
 }

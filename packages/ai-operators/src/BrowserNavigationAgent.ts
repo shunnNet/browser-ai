@@ -15,27 +15,39 @@ export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
     this.pageStatus = pageStatus
   }
   async whichElement(description: string) {
-    const id = await this.logic(
+    let id = await this.logic(
       `Which element ${description}? You must answer by only element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
+    if (!this.elementStore.getElementById(id)) {
+      id = await this.correctionByChoices(id, this.elementStore.getElementIds())
+    }
 
     return id && this.elementStore.getElementById(id)
   }
 
   async whichElements(description: string) {
     const idsString = await this.logic(
-      `Which elements ${description}? You must answer by only element ids like JSON array '[1, 2,...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
+      `Which elements ${description}? You must answer by only element ids like JSON array '["id1", "id2",...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
+    let ids: string[] = []
     try {
-      const ids = JSON.parse(idsString) as string[]
-
-      return ids
-        .map((id) => this.elementStore.getElementById(id))
-        .filter((item) => item)
+      ids = JSON.parse(idsString) as string[]
     } catch (e) {
-      return []
+      const correction = await this.correctionToJSON(
+        idsString,
+        '["id1", "id2"]',
+      )
+      try {
+        ids = JSON.parse(correction) as string[]
+      } catch (e) {
+        ids = []
+      }
     }
+
+    return ids
+      .map((id) => this.elementStore.getElementById(id))
+      .filter((item) => item)
   }
 }
