@@ -36,7 +36,7 @@ ${appendix || ""}
 
   async does(purpose: string) {
     const message = await this.logic(
-      `Does ${purpose} ? If yes, answer "yes". If no, answer "no". If you dont know, answer "none"`,
+      `Does ${purpose} ? Answer by "yes" or "no" with no other words. If you dont know, answer "none"`,
     )
 
     if (message === "yes") {
@@ -49,7 +49,7 @@ ${appendix || ""}
   }
   async is(statement: string) {
     const message = await this.logic(
-      `Is ${statement} ? If yes, answer "yes". If no, answer "no". If you dont know, answer "none"`,
+      `Is ${statement} ? Answer by "yes" or "no" with no other words. If you dont know, answer "none"`,
     )
 
     if (message === "yes") {
@@ -65,7 +65,7 @@ ${appendix || ""}
     const message = await this.logic(
       `Which one is ${purpose} ? You must answer with one of these: ${choices
         .map((c) => `"${c}"`)
-        .join(",")}. If you don't know, anwser "none"`,
+        .join(",")} with no other words. If you don't know, anwser "none"`,
     )
 
     return message
