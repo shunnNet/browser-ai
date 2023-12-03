@@ -2,9 +2,9 @@
 import { useVai } from "@browser-ai/ai-vue"
 
 const vai = useVai()
-vai?.check("User is logged in")
+vai.check("User is logged in")
 const doIs = () => {
-  vai?.is("User is logged in").then((res) => {
+  vai.is("User is logged in").then((res) => {
     console.log("Ai response:", res)
   })
 }
