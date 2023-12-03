@@ -53,4 +53,15 @@ export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
       .map((id) => this.elementStore.getElementById(id))
       .filter((item) => item)
   }
+
+  /** TODO: In Beta */
+  async explainThisPage(reason?: string) {
+    const result = await this.logic(
+      `Explain this page ${reason ? "for " + reason : ""}`,
+      this.pageStatus.computePrompt() +
+        "\n" +
+        this.elementStore.computePrompt(),
+    )
+    return result
+  }
 }
