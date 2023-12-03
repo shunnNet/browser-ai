@@ -13,11 +13,14 @@ export const createVai = (client: AgentClient) => {
 }
 
 /**
- * Get global `VueAgent` instance. Require register plugin first. Or will get undefined
+ * Get global `VueAgent` instance. Require register plugin first. Or will throw Error
  * The global `VueAgent` instance is created by `createVai` with global state with `RouteStatus`, `PageStatus`, `VueElementStore`.
  * */
 export const useVai = () => {
   const vai = inject<VueAgent>(PROVIDE_KEY.VAI)
+  if (!vai) {
+    throw new Error("vai not provided. You should register plugin first.")
+  }
   return vai
 }
 
@@ -28,28 +31,43 @@ export const useVai = () => {
 export const useCreateVai = () => {
   const createVai = inject<CreateAgent>(PROVIDE_KEY.CREATE_VAI)
   if (!createVai) {
-    throw new Error("createVai not provided")
+    throw new Error("createVai not provided. You should register plugin first.")
   }
   return createVai
 }
 
-/** Get global `PageStatus` instance. Require register plugin first. Or get undefined */
+/** Get global `PageStatus` instance. Require register plugin first. Or throw Error */
 export const usePageStatus = () => {
   const pageStatus = inject<PageStatus>(PROVIDE_KEY.PAGE_STATUS)
+  if (!pageStatus) {
+    throw new Error(
+      "pageStatus not provided. You should register plugin first.",
+    )
+  }
 
   return pageStatus
 }
 
-/** Get global `RouteStatus` instance. Require register plugin first. Or get undefined */
+/** Get global `RouteStatus` instance. Require register plugin first. Or throw Error */
 export const useRouteStatus = () => {
   const routeStatus = inject<RouteStatus>(PROVIDE_KEY.ROUTE_STATUS)
+  if (!routeStatus) {
+    throw new Error(
+      "routeStatus not provided. You should register plugin first.",
+    )
+  }
 
   return routeStatus
 }
 
-/** Get global `VueElementStore` instance. Require register plugin first. Or get undefined */
+/** Get global `VueElementStore` instance. Require register plugin first. Or throw Error */
 export const useVueElementStore = () => {
   const vueElementStore = inject<VueElementStore>(PROVIDE_KEY.VUE_ELEMENT_STORE)
+  if (!vueElementStore) {
+    throw new Error(
+      "vueElementStore not provided. You should register plugin first.",
+    )
+  }
 
   return vueElementStore
 }
