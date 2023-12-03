@@ -83,8 +83,9 @@ ${appendix || ""}
         .map((c) => `"${c}"`)
         .join(",")} with no other words. If you don't know, anwser "none"`,
     )
-    if (!choices.includes(message)) {
-      message = await this.correctionByChoices(message, choices)
+    const _choices = choices.concat("none")
+    if (!_choices.includes(message)) {
+      message = await this.correctionByChoices(message, _choices)
     }
 
     return message

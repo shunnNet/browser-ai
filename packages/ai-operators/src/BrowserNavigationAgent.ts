@@ -19,8 +19,11 @@ export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
       `Which element ${description}? You must answer by only element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
-    if (!this.elementStore.getElementById(id)) {
-      id = await this.correctionByChoices(id, this.elementStore.getElementIds())
+    if (!this.elementStore.getElementById(id) && id !== "no") {
+      id = await this.correctionByChoices(
+        id,
+        this.elementStore.getElementIds().concat("no"),
+      )
     }
 
     return id && this.elementStore.getElementById(id)
