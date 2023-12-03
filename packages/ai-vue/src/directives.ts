@@ -11,16 +11,16 @@ export const useVaiDirective = (vueElementStore: VueElementStore) => {
   const vAi = <Directive<HTMLElement, VAiBinding>>{
     created(el, binding, vnode) {
       const id = binding.value.id
-      const description = binding.value.description
+      const description = binding.value.description || el?.textContent || ""
 
       el.dataset[`aiId`] = id
       el.dataset[`aiDescription`] = description
 
-      vueElementStore.setElementById(id, { ...binding.value, el, vnode })
+      vueElementStore.setElementById(id, { id, description, el, vnode })
     },
     beforeUpdate(el, binding, vnode) {
       const id = binding.value.id
-      const description = binding.value.description
+      const description = binding.value.description || el?.textContent || ""
 
       el.dataset[`aiId`] = id
       el.dataset[`aiDescription`] = description
@@ -28,7 +28,7 @@ export const useVaiDirective = (vueElementStore: VueElementStore) => {
       if (binding.oldValue && binding.oldValue.id !== id) {
         vueElementStore.deleteElementById(binding.oldValue.id)
       }
-      vueElementStore.setElementById(id, { ...binding.value, el, vnode })
+      vueElementStore.setElementById(id, { id, description, el, vnode })
     },
     beforeUnmount(el) {
       const id = el.dataset["aiId"] as string
