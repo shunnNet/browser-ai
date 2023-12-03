@@ -1,5 +1,16 @@
 import { createApp } from "vue"
-import "./style.css"
+import router from "./router"
 import App from "./App.vue"
+import { vaiPlugin, connectVueRouter } from "@browser-ai/ai-vue"
+import { chatgptAgentClient } from "./api/openai"
 
-createApp(App).mount("#app")
+const app = createApp(App)
+
+const routeStatus = connectVueRouter(router)
+
+app.use(router).use(vaiPlugin, {
+  routeStatus,
+  client: chatgptAgentClient,
+})
+
+app.mount("#app")

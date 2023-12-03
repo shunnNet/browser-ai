@@ -7,7 +7,7 @@ export type OpenAIMessage = {
   name?: string
 }
 
-export const chatCompletion = async (payload) => {
+export const chatCompletion = async (payload: any) => {
   const response = await openaiClient("/chat/completions").post(payload).json()
 
   return {
@@ -27,17 +27,26 @@ export const chatCompletion = async (payload) => {
   }
 }
 
-export const chatgptAgentClient: AgentClient = async (prompt: string) => {
+export const chatgptAgentClient: AgentClient = async ({
+  prompt,
+  systemMessage,
+}) => {
+  const messages = []
+  if (systemMessage) {
+    messages.push({
+      role: "system",
+      content: systemMessage,
+    })
+  }
+  messages.push({
+    role: "user",
+    content: prompt,
+  })
   const { message } = await chatCompletion({
     model: "gpt-3.5-turbo",
     temperature: 0,
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
+    messages,
   })
 
-  return message
+  return message as string
 }
