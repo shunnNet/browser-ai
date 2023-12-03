@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@browser-ai/ai-operators": "workspace:^",
+    "@browser-ai/ai-statements": "workspace:^",
     "@crazydos/vue-llm-rich-message": "^0.2.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"

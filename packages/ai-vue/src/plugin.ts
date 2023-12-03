@@ -2,7 +2,7 @@ import { Plugin } from "vue"
 import { useVaiDirective } from "./directives"
 import { createVueElementStore } from "./vueElementStore"
 import { RouteStatus, VueAgent } from "."
-import { AgentClient, PageStatus } from "@browser-ai/ai-operators"
+import { AgentClient, PageStatus } from "@browser-ai/ai-statements"
 import { PROVIDE_KEY } from "./constant"
 import { VaiPluginOptions, CreateAgent } from "./types"
 

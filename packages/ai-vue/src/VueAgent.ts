@@ -2,7 +2,7 @@ import {
   BrowserNavigationAgent,
   AgentClient,
   PageStatus,
-} from "@browser-ai/ai-operators"
+} from "@browser-ai/ai-statements"
 import { VueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
 import {

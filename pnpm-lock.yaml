@@ -36,7 +36,7 @@ importers:
         specifier: ^5.0.2
         version: 5.2.2
 
-  packages/ai-operators:
+  packages/ai-statements:
     devDependencies:
       typescript:
         specifier: ^5.0.2
@@ -50,9 +50,9 @@ importers:
 
   packages/ai-vue:
     dependencies:
-      '@browser-ai/ai-operators':
+      '@browser-ai/ai-statements':
         specifier: workspace:^
-        version: link:../ai-operators
+        version: link:../ai-statements
       '@crazydos/vue-llm-rich-message':
         specifier: ^0.2.0
         version: 0.2.0
@@ -81,9 +81,9 @@ importers:
 
   playground/vite:
     dependencies:
-      '@browser-ai/ai-operators':
+      '@browser-ai/ai-statements':
         specifier: workspace:^
-        version: link:../../packages/ai-operators
+        version: link:../../packages/ai-statements
       '@browser-ai/ai-vue':
         specifier: workspace:^
         version: link:../../packages/ai-vue
