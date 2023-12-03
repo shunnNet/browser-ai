@@ -1,5 +1,5 @@
 import { Router, RouteMeta } from "vue-router"
-import { routeStatus } from "./RouteStatus"
+import { RouteStatus } from "./RouteStatus"
 
 type RouteMetaAI = RouteMeta & {
   ai?: {
@@ -9,6 +9,8 @@ type RouteMetaAI = RouteMeta & {
 }
 
 export const connectVueRouter = (router: Router) => {
+  const routeStatus = new RouteStatus()
+
   router.getRoutes().forEach((r) => {
     const meta: RouteMetaAI = r.meta
     if (typeof r.name === "string" && meta.ai) {
@@ -29,4 +31,6 @@ export const connectVueRouter = (router: Router) => {
       })
     }
   })
+
+  return routeStatus
 }

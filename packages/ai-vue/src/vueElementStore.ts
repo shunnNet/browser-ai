@@ -6,4 +6,7 @@ export type VueElementStoreItem = ElementStoreItem & {
   vnode: VNode
 }
 
-export const vueElementStore = new ElementStore<VueElementStoreItem>()
+export type VueElementStore = ElementStore<VueElementStoreItem>
+
+export const createVueElementStore: () => VueElementStore = () =>
+  new ElementStore<VueElementStoreItem>()

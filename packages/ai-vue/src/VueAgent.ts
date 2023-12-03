@@ -3,7 +3,7 @@ import {
   AgentClient,
   PageStatus,
 } from "@browser-ai/ai-operators"
-import { vueElementStore, VueElementStoreItem } from "./vueElementStore"
+import { VueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
 import {
   computeFormatHint,
@@ -12,9 +12,10 @@ import {
 
 export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
   protected routeStatus: RouteStatus
+
   constructor(
     client: AgentClient,
-    elementStore: typeof vueElementStore,
+    elementStore: VueElementStore,
     pageStatus: PageStatus,
     routeStatus: RouteStatus,
   ) {

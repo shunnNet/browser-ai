@@ -60,5 +60,3 @@ Description: ${this.currentPageRoute.description}
     return this.routes.map((r) => r.id)
   }
 }
-
-export const routeStatus = new RouteStatus()
