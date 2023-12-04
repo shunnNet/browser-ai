@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@browser-ai/ai-statements": "workspace:^",
-    "@browser-ai/ai-vue": "workspace:^",
+    "@browser-ai/ai-expression": "workspace:^",
+    "@browser-ai/vai": "workspace:^",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },

@@ -1,4 +1,4 @@
-import { AgentClient, PageStatus } from "@browser-ai/ai-statements"
+import { AgentClient, PageStatus } from "@browser-ai/ai-expression"
 import { VueAgent } from "./VueAgent"
 import { RouteStatus } from "."
 

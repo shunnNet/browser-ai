@@ -1,4 +1,4 @@
-import { ElementStore, ElementStoreItem } from "@browser-ai/ai-statements"
+import { ElementStore, ElementStoreItem } from "@browser-ai/ai-expression"
 import { VNode } from "vue"
 
 export type VueElementStoreItem = ElementStoreItem & {

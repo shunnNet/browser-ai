@@ -20,7 +20,7 @@ export default defineConfig({
     copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "ai-vue",
+      name: "vai",
       fileName: "index",
     },
     rollupOptions: {

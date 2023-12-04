@@ -1,5 +1,5 @@
 import { openaiClient } from "./fetch"
-import { AgentClient } from "@browser-ai/ai-statements"
+import { AgentClient } from "@browser-ai/ai-expression"
 
 export type OpenAIMessage = {
   role: "user" | "system" | "function" | "assistant"

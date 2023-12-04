@@ -1,7 +1,7 @@
 import { createApp } from "vue"
 import router from "./router"
 import App from "./App.vue"
-import { vaiPlugin, connectVueRouter } from "@browser-ai/ai-vue"
+import { vaiPlugin, connectVueRouter } from "@browser-ai/vai"
 import { chatgptAgentClient } from "./api/openai"
 
 const app = createApp(App)

@@ -1,5 +1,5 @@
 {
-  "name": "@browser-ai/ai-vue",
+  "name": "@browser-ai/vai",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@browser-ai/ai-statements": "workspace:^",
+    "@browser-ai/ai-expression": "workspace:^",
     "@crazydos/vue-llm-rich-message": "^0.2.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"

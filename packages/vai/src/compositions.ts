@@ -1,4 +1,4 @@
-import { AgentClient, PageStatus } from "@browser-ai/ai-statements"
+import { AgentClient, PageStatus } from "@browser-ai/ai-expression"
 import { inject } from "vue"
 import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
