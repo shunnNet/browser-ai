@@ -18,6 +18,7 @@ export class Agent {
 
   check(content: string) {
     this.content = content
+    return this
   }
 
   computePrompt(logicMessage: string, appendix?: string) {
