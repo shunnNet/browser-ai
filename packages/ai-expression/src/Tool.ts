@@ -7,20 +7,22 @@ export type ToolSchema = {
   } & Record<string, any>
 } & Record<string, any>
 
-export type ToolFunction = (args: Record<string, any>) => {
-  data: any
-  message: string
-}
-export type ToolValidateFunction = (args: any) => boolean
+export type ToolFunction<
+  T extends ToolFunctionParams = ToolFunctionParams,
+  R = any,
+> = (args: T) => R
 
-export class Tool {
+export type ToolValidateFunction = (args: ToolFunctionParams) => boolean
+
+export type ToolFunctionParams = Record<string, any>
+export class Tool<T extends ToolFunctionParams = ToolFunctionParams, R = any> {
   public name: string
-  public func: ToolFunction
+  public func: ToolFunction<T, R>
   public schema: ToolSchema
   public validate: ToolValidateFunction
 
   constructor(
-    func: ToolFunction,
+    func: ToolFunction<T, R>,
     schema: ToolSchema,
     validate?: ToolValidateFunction,
   ) {

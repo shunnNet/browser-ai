@@ -1,4 +1,4 @@
-import { Tool } from "./Tool"
+import { Tool, ToolFunctionParams } from "./Tool"
 
 export type AgentClient = (message: {
   prompt: string
@@ -90,8 +90,18 @@ ${appendix || ""}
 
     return message
   }
-
-  async useTools(tools: Tool[]) {
+  async useTools(tools: Tool<any>[]) {
+    const result: {
+      func: string
+      args: ToolFunctionParams
+      invoke: () => any
+      error?: string
+    } = {
+      func: "",
+      args: {},
+      invoke: () => {},
+      error: undefined,
+    }
     const functionPrompts = tools
       .map((t, index) => {
         return `---function ${index + 1}---
@@ -101,7 +111,7 @@ Function JSON Schema: ${JSON.stringify(t.schema)}
       })
       .join("\n\n")
     const prompt = `I need you choose 1 function and pass args for fulfill the request based on following content. You MUST follow the JSON Schema to pass args to function.
-  
+
 ---question---
 
 ---content---
@@ -111,18 +121,35 @@ ${functionPrompts}
 
 ---your anwser---
 {
-  "function": <function-name-to-be-call>
+  "func": <function-name-to-be-call>
   "args": <function-args>
 }`
-    const message = await this.client({ prompt })
+    const response = await this.client({ prompt })
     try {
-      return JSON.parse(message)
-    } catch (e) {
-      if (e instanceof Error) {
-        return { error: e.message }
-      } else {
-        return { error: "Unknown Error" }
+      const parsed = JSON.parse(response) as {
+        func: unknown
+        args: unknown
       }
+      const selectedTool = tools.find((t) => t.name === parsed.func)
+
+      if (
+        typeof parsed.func === "string" &&
+        selectedTool &&
+        parsed.args &&
+        typeof parsed.args === "object" &&
+        !Array.isArray(parsed.args) &&
+        selectedTool.validate(parsed.args)
+      ) {
+        result.func = parsed.func
+        result.args = parsed.args
+        result.invoke = () => selectedTool.func(result.args)
+        return result
+      } else {
+        throw new Error(`Invalid anwser from agent: ${response}`)
+      }
+    } catch (e) {
+      result.error = e instanceof Error ? e.message : "Unknown Error"
+      return result
     }
   }
 
