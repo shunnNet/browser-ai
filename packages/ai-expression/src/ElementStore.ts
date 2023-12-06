@@ -3,7 +3,7 @@ export type ElementStoreItem = {
   description: string
 }
 
-export class ElementStore<T extends ElementStoreItem> {
+export class ElementStore<T extends ElementStoreItem = ElementStoreItem> {
   public elements: Record<string, T>
   constructor() {
     this.elements = {}
@@ -38,5 +38,11 @@ Description: ${item.description}
     delete this.elements[id]
 
     return this
+  }
+
+  deleteAllElements() {
+    Object.keys(this.elements).forEach((id) => {
+      this.deleteElementById(id)
+    })
   }
 }

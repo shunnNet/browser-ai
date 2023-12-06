@@ -2,12 +2,21 @@ import { Agent, AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
 
-export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
-  public elementStore: ElementStore<T>
+export class BrowserNavigationAgent extends Agent {
+  public elementStore: ElementStore<ElementStoreItem>
   public pageStatus: PageStatus
+
+  static create(client: AgentClient) {
+    return new BrowserNavigationAgent(
+      client,
+      new ElementStore(),
+      new PageStatus(),
+    )
+  }
+
   constructor(
     client: AgentClient,
-    elementStore: ElementStore<T>,
+    elementStore: ElementStore<ElementStoreItem>,
     pageStatus: PageStatus,
   ) {
     super(client)
@@ -52,6 +61,25 @@ export class BrowserNavigationAgent<T extends ElementStoreItem> extends Agent {
     return ids
       .map((id) => this.elementStore.getElementById(id))
       .filter((item) => item)
+  }
+
+  collect() {
+    Array.from(document.querySelectorAll<HTMLElement>(`[data-ai-id]`)).forEach(
+      (ele) => {
+        if (ele.dataset.aiId) {
+          this.elementStore.setElementById(ele.dataset.aiId, {
+            id: ele.dataset.aiId,
+            description: ele.dataset.aiDescription || ele.textContent || "",
+          })
+        }
+      },
+    )
+    return this
+  }
+
+  drop() {
+    this.elementStore.deleteAllElements()
+    return this
   }
 
   /** TODO: In Beta */
