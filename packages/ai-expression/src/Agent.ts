@@ -21,6 +21,11 @@ export class Agent {
     return this
   }
 
+  forget() {
+    this.content = ""
+    return this
+  }
+
   computePrompt(logicMessage: string, appendix?: string) {
     return `I need you anwser the question based on following content. ${logicMessage}
 
@@ -91,16 +96,16 @@ ${appendix || ""}
 
     return message
   }
-  async useTools(tools: Tool<any>[]) {
+  async pickTool(tools: Tool<any>[]) {
     const result: {
       func: string
       args: ToolFunctionParams
-      invoke: () => any
+      useIt: () => any
       error?: string
     } = {
       func: "",
       args: {},
-      invoke: () => {},
+      useIt: () => {},
       error: undefined,
     }
     const functionPrompts = tools
@@ -143,7 +148,7 @@ ${functionPrompts}
       ) {
         result.func = parsed.func
         result.args = parsed.args
-        result.invoke = () => selectedTool.func(result.args)
+        result.useIt = () => selectedTool.func(result.args)
         return result
       } else {
         throw new Error(`Invalid anwser from agent: ${response}`)
