@@ -8,6 +8,7 @@ export * from "./vueElementStore"
 export * from "./types"
 export * from "./constant"
 export * from "./render"
+export * from "./useAgentConversation"
 export * from "@browser-ai/ai-expression"
 import vaiPlugin from "./plugin"
 export { vaiPlugin }
