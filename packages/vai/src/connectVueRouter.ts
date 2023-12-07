@@ -14,6 +14,9 @@ export const connectVueRouter = (router: Router) => {
   router.getRoutes().forEach((r) => {
     const meta: RouteMetaAI = r.meta
     if (typeof r.name === "string" && meta.ai) {
+      if (!(meta.ai.title && meta.ai.description)) {
+        console.warn("Missing AI title or description for route", r.name)
+      }
       routeStatus.addRoute({
         id: r.name,
         title: meta.ai.title,
