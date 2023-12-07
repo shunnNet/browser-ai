@@ -32,6 +32,8 @@ export const connectVueRouter = (router: Router) => {
         title: meta.ai.title,
         description: meta.ai.description,
       })
+    } else {
+      routeStatus.unsetCurrentRoute()
     }
   })
 

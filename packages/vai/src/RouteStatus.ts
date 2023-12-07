@@ -39,6 +39,10 @@ Description: ${this.currentPageRoute.description}
     this.currentPageRoute = route
   }
 
+  unsetCurrentRoute() {
+    this.currentPageRoute = null
+  }
+
   addRoute(route: Route) {
     this.routes.push(route)
     return this
