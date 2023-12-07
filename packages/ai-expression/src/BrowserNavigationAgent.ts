@@ -2,21 +2,27 @@ import { Agent, AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
 
-export class BrowserNavigationAgent extends Agent {
-  public elementStore: ElementStore<ElementStoreItem>
+type DOMElementStoreItem = ElementStoreItem & {
+  el: HTMLElement
+}
+
+export class BrowserNavigationAgent<
+  T extends DOMElementStoreItem = DOMElementStoreItem,
+> extends Agent {
+  public elementStore: ElementStore<T>
   public pageStatus: PageStatus
 
   static create(client: AgentClient) {
     return new BrowserNavigationAgent(
       client,
-      new ElementStore(),
+      new ElementStore<DOMElementStoreItem>(),
       new PageStatus(),
     )
   }
 
   constructor(
     client: AgentClient,
-    elementStore: ElementStore<ElementStoreItem>,
+    elementStore: ElementStore<T>,
     pageStatus: PageStatus,
   ) {
     super(client)
@@ -65,12 +71,14 @@ export class BrowserNavigationAgent extends Agent {
 
   collect() {
     Array.from(document.querySelectorAll<HTMLElement>(`[data-ai-id]`)).forEach(
-      (ele) => {
-        if (ele.dataset.aiId) {
-          this.elementStore.setElementById(ele.dataset.aiId, {
-            id: ele.dataset.aiId,
-            description: ele.dataset.aiDescription || ele.textContent || "",
-          })
+      (el) => {
+        // TODO: remove "as T"
+        if (el.dataset.aiId) {
+          this.elementStore.setElementById(el.dataset.aiId, {
+            id: el.dataset.aiId,
+            description: el.dataset.aiDescription || el.textContent || "",
+            el,
+          } as T)
         }
       },
     )
