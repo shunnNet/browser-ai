@@ -11,7 +11,7 @@ import { createRouterWaiter } from "./routerWaiter"
 export default {
   install(app, options) {
     const vueElementStore = createVueElementStore()
-    const pageStatus: PageStatus = options.pageStatus || new PageStatus()
+    const pageStatus = new PageStatus()
 
     let routeStatus: RouteStatus | null = null
     if (options.router) {
@@ -35,11 +35,5 @@ export default {
     app.provide(PROVIDE_KEY.PAGE_STATUS, pageStatus)
     app.provide(PROVIDE_KEY.VUE_ELEMENT_STORE, vueElementStore)
     app.directive("ai", useVaiDirective(vueElementStore))
-
-    if (typeof options === "object" && options.client) {
-      const vai = createVai(options.client)
-      vai.systemMessage = options.systemMessage || ""
-      app.provide(PROVIDE_KEY.VAI, vai)
-    }
   },
 } as Plugin<VaiPluginOptions>
