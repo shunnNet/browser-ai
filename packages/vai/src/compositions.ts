@@ -5,6 +5,7 @@ import { CreateAgent } from "./types"
 import { RouteStatus } from "./RouteStatus"
 import { VueAgent } from "./VueAgent"
 import { VueElementStore } from "./vueElementStore"
+import { RouterWaiter } from "./routerWaiter"
 
 /** Create Vai with global state with `RouteStatus`, `PageStatus`, `VueElementStore`. Require register plugin first. */
 export const createVai = (client: AgentClient) => {
@@ -70,4 +71,15 @@ export const useVueElementStore = () => {
   }
 
   return vueElementStore
+}
+
+export const useRouterWaiter = () => {
+  const routerWaiter = inject<RouterWaiter>(PROVIDE_KEY.ROUTER_WAITER)
+  if (!routerWaiter) {
+    throw new Error(
+      "RouterWaiter not provided. You should register plugin first.",
+    )
+  }
+
+  return routerWaiter
 }

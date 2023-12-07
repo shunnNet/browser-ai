@@ -1,9 +1,9 @@
 import { AgentClient, PageStatus } from "@browser-ai/ai-expression"
 import { VueAgent } from "./VueAgent"
-import { RouteStatus } from "."
+import { Router } from "vue-router"
 
 export type VaiPluginOptions = Partial<{
-  routeStatus: RouteStatus
+  router: Router
   client: AgentClient
   systemMessage: string
   pageStatus: PageStatus
