@@ -19,16 +19,32 @@ export default defineConfig({
           { text: "Intro", link: "/guide/intro" },
           { text: "Why", link: "/guide/why" },
           { text: "Getting Started", link: "/guide/getting-started" },
-          // { text: "Runtime API Examples", link: "/api-examples" },
+          { text: "Recommended Infra", link: "/guide/recommended-infra" },
         ],
       },
       {
-        text: "ai-expression",
-        items: [{ text: "basic", link: "/ai-expression/basic" }],
+        text: "Usage",
+        items: [
+          { text: "Agent", link: "/guide/agent" },
+          { text: "BrowserAgent", link: "/guide/browser-agent" },
+        ],
       },
+
       {
-        text: "ai-vue",
-        items: [{ text: "basic", link: "/ai-vue/basic" }],
+        text: "Vai (Vue)",
+        items: [
+          { text: "Vai", link: "/vai/vai" },
+          { text: "Directive", link: "/vai/directive" },
+          { text: "Router integration", link: "/vai/vue-router" },
+          {
+            text: "Render prompt with component",
+            link: "/vai/render-component",
+          },
+          {
+            text: "Compositions",
+            link: "/vai/compositions",
+          },
+        ],
       },
       {
         text: "Examples",
@@ -42,16 +58,19 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/shunnNet/browser-ai" },
     ],
-  },
-  locales: {
-    root: {
-      label: "English",
-      lang: "en",
-    },
-    "zh-TW": {
-      label: "繁體中文",
-      lang: "zh-Hant-TW",
-      link: "/zh-tw/",
+    search: {
+      provider: "local",
     },
   },
+  // locales: {
+  //   root: {
+  //     label: "English",
+  //     lang: "en",
+  //   },
+  //   "zh-TW": {
+  //     label: "繁體中文",
+  //     lang: "zh-Hant-TW",
+  //     link: "/zh-tw/",
+  //   },
+  // },
 })

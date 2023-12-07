@@ -1,4 +1,4 @@
-# ai-expression
+# Browser AI
 This is a tool library for developing AI web applications at browser side, especially tailored for business applications that require compliance with rules.
 
 This library can assist you in:
@@ -10,12 +10,16 @@ This library can assist you in:
 Please also refer to the conceptual demonstration repository  [ai-vue-concept](https://github.com/shunnNet/ai-vue-concept).
 
 ## Features
-- Atomic-level natural language functions. (`.is()`, `.whichIs()`, etc.)
-- Modern frontend framework integration: (Vue only currently):
+- **Simple**: No complicate setting or parameters.
+- **Atomic**: Atomic-level natural language functions. (`.is()`, `.whichIs()`, etc.)
+- **Framework integration**: (Vue only currently):
   - Easily annotate node, routing information and incorporate prompts
   - Render component in LLM message
+- **Typed**: Support Typescript.
 
-> IMPORTANT: the expected use of this library is to securely handle the connection to the language model on the server side to prevent API key exposure. So, it is not recommended to connect LLM directly in browser. Alternatively, running the language model directly in the browser is also an option.
+:::warning
+The expected use of this library is to securely handle the connection to the language model on the server side to prevent API key exposure. So, it is not recommended to connect LLM directly in browser. Alternatively, running the language model directly in the browser is also an option.
+:::
 
 ## Why
 Please refer to [Why](./why.md)
