@@ -2,7 +2,7 @@ import { Plugin } from "vue"
 import { useVaiDirective } from "./directives"
 import { createVueElementStore } from "./vueElementStore"
 import { RouteStatus, VueAgent } from "."
-import { AgentClient, PageStatus } from "@browser-ai/ai-expression"
+import { AgentClient, AgentEvent, PageStatus } from "@browser-ai/ai-expression"
 import { connectVueRouter } from "./connectVueRouter"
 import { PROVIDE_KEY } from "./constant"
 import { VaiPluginOptions, CreateAgent } from "./types"
@@ -12,10 +12,11 @@ export default {
   install(app, options) {
     const vueElementStore = createVueElementStore()
     const pageStatus = new PageStatus()
+    const agentEvent = new AgentEvent("Event")
 
     let routeStatus: RouteStatus | null = null
     if (options.router) {
-      routeStatus = connectVueRouter(options.router)
+      routeStatus = connectVueRouter(options.router, agentEvent)
       const routerWaiter = createRouterWaiter(options.router)
       app.provide(PROVIDE_KEY.ROUTER_WAITER, routerWaiter)
     } else {
@@ -29,6 +30,7 @@ export default {
         vueElementStore,
         pageStatus,
         routeStatus as RouteStatus,
+        agentEvent,
       )
 
     app.provide(PROVIDE_KEY.CREATE_VAI, createVai)

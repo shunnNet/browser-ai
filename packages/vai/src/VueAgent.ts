@@ -2,6 +2,7 @@ import {
   BrowserNavigationAgent,
   AgentClient,
   PageStatus,
+  AgentEvent,
 } from "@browser-ai/ai-expression"
 import { VueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
@@ -18,9 +19,11 @@ export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
     elementStore: VueElementStore,
     pageStatus: PageStatus,
     routeStatus: RouteStatus,
+    agentEvent?: AgentEvent,
   ) {
-    super(client, elementStore, pageStatus)
+    super(client, "Event", elementStore, pageStatus)
     this.routeStatus = routeStatus
+    this.event = agentEvent || this.event
   }
 
   async whichRoute(description: string): Promise<Route | undefined> {

@@ -1,4 +1,4 @@
-import { AgentClient, PageStatus } from "@browser-ai/ai-expression"
+import { AgentClient, AgentEvent, PageStatus } from "@browser-ai/ai-expression"
 import { inject } from "vue"
 import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
@@ -82,4 +82,15 @@ export const useRouterWaiter = () => {
   }
 
   return routerWaiter
+}
+
+export const useAgentEvent = () => {
+  const agentEvent = inject<AgentEvent>(PROVIDE_KEY.AGENT_EVENT)
+  if (!agentEvent) {
+    throw new Error(
+      "AgentEvent not provided. You should register plugin first.",
+    )
+  }
+
+  return agentEvent
 }

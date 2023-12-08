@@ -1,5 +1,6 @@
 import { Router, RouteMeta } from "vue-router"
 import { RouteStatus } from "./RouteStatus"
+import { AgentEvent } from "@browser-ai/ai-expression"
 
 type RouteMetaAI = RouteMeta & {
   ai?: {
@@ -8,7 +9,7 @@ type RouteMetaAI = RouteMeta & {
   }
 }
 
-export const connectVueRouter = (router: Router) => {
+export const connectVueRouter = (router: Router, event: AgentEvent) => {
   const routeStatus = new RouteStatus()
 
   router.getRoutes().forEach((r) => {
@@ -26,14 +27,21 @@ export const connectVueRouter = (router: Router) => {
   })
   router.afterEach((to) => {
     const meta: RouteMetaAI = to.meta
+    let pageName = ""
     if (meta.ai) {
       routeStatus.setCurrentRoute({
         id: meta.ai.name,
         description: meta.ai.description,
         data: to,
       })
+      pageName = meta.ai.name
     } else {
       routeStatus.unsetCurrentRoute()
+      pageName = to.name?.toString() || to.path
+    }
+
+    if (pageName && event) {
+      event.record(`User enter the page: ${pageName}`)
     }
   })
 
