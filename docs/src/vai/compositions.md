@@ -74,6 +74,7 @@ onMounted(() => {
 </script>
 ```
 
+## `useAgentEvent`
 ## `useRouterWaiter`
 ## `useVueElementStore`
 ## `useRouteStatus`

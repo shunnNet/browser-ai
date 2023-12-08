@@ -48,6 +48,7 @@ onMounted(() => {
   vai.check(`User: I want to play with ai !`)
 
   const element = await vai.whichElement("can fulfill user's purpose")
+  // { id, description, el, vnode }
 
   element.el.scrollIntoView()
 })
@@ -55,7 +56,10 @@ onMounted(() => {
 </script>
 ```
 
-:::info
+:::tip
+You can also get `vnode` by `element.vnode`
+:::
+:::warning
 Keep in mind if you want do DOM manipulation, you have to do it after `onMounted`
 :::
 

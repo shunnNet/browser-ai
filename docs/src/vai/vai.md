@@ -60,5 +60,6 @@ vai.forget()
 `@browser-ai/vai` also provide functionality with `vue-router`, `component`, `DOM`, you can check the topic interested in.
 
 - [Render model response with component](./render-component)
-- [Pick a route](./vue-router)
-- [Pick a element](./directive)
+- [Navigation with routes](./vue-router)
+- [Navigation with elements](./directive)
+- [Suggest actions base on user's action records](./event-and-suggestion.md)

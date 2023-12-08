@@ -191,6 +191,69 @@ const choices = ["login", "checkout"]
 await agent.correctionByChoices(wrong, choices) // typically "login"
 ```
 
+## Event and Suggest Actions 
+`Agent` has a method `.suggestActions()`, which can suggest 1 or more actions based on `Event` records. This is useful when suggest next actions to user.
+
+To record the event, use `.recordEvent()`. We can call it multiple times
+
+```ts
+agent.recordEvent("User enter the page: Index")
+agent.recordEvent("User enter the page: Product")
+agent.recordEvent("User click the 'detail' button fo Macbook Pro 13")
+agent.recordEvent("User enter the page: Product Detail")
+agent.recordEvent("User is viewing Product info Macbook Pro 13")
+
+// will make the record like this
+/**
+ * 
+  User is viewing Product info Macbook Pro 13
+  User enter the page: Product Detail
+  User click the 'detail' button fo Macbook Pro 13
+  User enter the page: Product
+  User enter the page: Index
+ */
+```
+
+After recording, we can ask `Agent` to `.suggestActions()`.
+
+```ts
+await agent.suggestActions([
+  { id: "login", description: "Login" },
+  { id: "register", description: "Register" },
+  { id: "addToCart", description: "Add product to cart" },
+  { id: "addProductToFavorite", description: "Add product to favorite list" },
+])
+
+/**
+ * [
+ *   { id: "addToCart", description: "Add product to cart" },
+ *   { id: "addProductToFavorite", description: "Add product to favorite list" }
+ * ]
+ */
+```
+
+You can also add `data` to your action item for convenience. `data` is a object-literal can contain anything you need.
+
+```ts
+await agent.suggestActions([
+  // .....
+  { id: "addToCart", 
+    description: "Add product to cart", 
+    data: { 
+      action: () => {},
+      product: { /** product data */}
+      // .....
+    } 
+  },
+  // ...
+])
+
+```
+
+:::info
+The max record now is `10`. When the 11-th record comes-in, use First in, First out logic to remove record. 
+:::
+
 ## Tools
 When you need the `Agent` to dynamically generate JSON content, you can use `Tool`.
 

@@ -37,6 +37,10 @@ export default defineConfig({
           { text: "Directive", link: "/vai/directive" },
           { text: "Router integration", link: "/vai/vue-router" },
           {
+            text: "Event and Suggestion",
+            link: "/vai/event-and-suggestion",
+          },
+          {
             text: "Render prompt with component",
             link: "/vai/render-component",
           },
