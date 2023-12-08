@@ -1,7 +1,6 @@
-export type ElementStoreItem = {
-  id: string
-  description: string
-}
+import { Item, computeItemsPrompt } from "./Item"
+
+export type ElementStoreItem = Pick<Item, "id" | "description">
 
 export class ElementStore<T extends ElementStoreItem = ElementStoreItem> {
   public elements: Record<string, T>
@@ -10,14 +9,7 @@ export class ElementStore<T extends ElementStoreItem = ElementStoreItem> {
   }
 
   computePrompt(): string {
-    return Object.values(this.elements)
-      .map((item) => {
-        return `---Element id:${item.id}---        
-Name: ${item.id}
-Description: ${item.description}
-`
-      })
-      .join("\n\n")
+    return computeItemsPrompt(Object.values(this.elements), "Element")
   }
 
   getElementIds() {

@@ -96,6 +96,7 @@ ${appendix || ""}
 
     return message
   }
+
   async pickTool(tools: Tool<any>[]) {
     const result: {
       func: string
@@ -174,6 +175,7 @@ ${correct}
 `,
     })
   }
+
   async correctionByChoices(wrong: string, choices: string[]) {
     return this.correction(
       wrong,
