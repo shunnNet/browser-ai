@@ -9,7 +9,7 @@ import { VaiPluginOptions, CreateAgent } from "./types"
 import { createRouterWaiter } from "./routerWaiter"
 
 export default {
-  install(app, options) {
+  install(app, options = {}) {
     const vueElementStore = createVueElementStore()
     const pageStatus = new PageStatus()
     const agentEvent = new AgentEvent("Event")
@@ -32,7 +32,6 @@ export default {
         routeStatus as RouteStatus,
         agentEvent,
       )
-
     app.provide(PROVIDE_KEY.CREATE_VAI, createVai)
     app.provide(PROVIDE_KEY.PAGE_STATUS, pageStatus)
     app.provide(PROVIDE_KEY.VUE_ELEMENT_STORE, vueElementStore)
