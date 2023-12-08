@@ -3,7 +3,7 @@ import { RouteStatus } from "./RouteStatus"
 
 type RouteMetaAI = RouteMeta & {
   ai?: {
-    title: string
+    name: string
     description: string
   }
 }
@@ -13,24 +13,24 @@ export const connectVueRouter = (router: Router) => {
 
   router.getRoutes().forEach((r) => {
     const meta: RouteMetaAI = r.meta
-    if (typeof r.name === "string" && meta.ai) {
-      if (!(meta.ai.title && meta.ai.description)) {
-        console.warn("Missing AI title or description for route", r.name)
+    if (meta.ai) {
+      if (!(meta.ai.name && meta.ai.description)) {
+        throw new Error(`Missing AI name or description for route: ${r.path}`)
       }
       routeStatus.addRoute({
-        id: r.name,
-        title: meta.ai.title,
+        id: meta.ai.name,
         description: meta.ai.description,
+        data: r,
       })
     }
   })
   router.afterEach((to) => {
     const meta: RouteMetaAI = to.meta
-    if (typeof to.name === "string" && meta.ai) {
+    if (meta.ai) {
       routeStatus.setCurrentRoute({
-        id: to.name,
-        title: meta.ai.title,
+        id: meta.ai.name,
         description: meta.ai.description,
+        data: to,
       })
     } else {
       routeStatus.unsetCurrentRoute()

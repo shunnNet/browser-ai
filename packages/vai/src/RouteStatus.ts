@@ -1,8 +1,6 @@
-export type Route = {
-  id: string
-  title: string
-  description: string
-}
+import { Item, computeItemsPrompt } from "@browser-ai/ai-expression"
+
+type Route = Item
 
 export class RouteStatus {
   protected routes: Route[]
@@ -16,15 +14,7 @@ export class RouteStatus {
   }
 
   computeRoutesPrompt() {
-    return this.routes
-      .map((r) => {
-        return `---available page id: ${r.id}---
-Id: ${r.id}
-Title: ${r.title}
-Description: ${r.description}
-`
-      })
-      .join("\n\n")
+    return computeItemsPrompt(this.routes, "Available Page")
   }
   computeCurrentPagePrompt() {
     return this.currentPageRoute
