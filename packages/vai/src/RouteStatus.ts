@@ -1,6 +1,6 @@
 import { Item, computeItemsPrompt } from "@browser-ai/ai-expression"
 
-type Route = Item
+export type Route = Item
 
 export class RouteStatus {
   protected routes: Route[]
