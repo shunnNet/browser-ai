@@ -33,7 +33,7 @@ export class BrowserNavigationAgent<
   }
   async whichElement(description: string) {
     let id = await this.logic(
-      `Which element ${description}? You must answer by only element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
+      `Which element ${description}? You must answer by only 1 element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
       this.elementStore.computePrompt(),
     )
     if (!this.elementStore.getElementById(id) && id !== "no") {
