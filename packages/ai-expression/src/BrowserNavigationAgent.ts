@@ -12,9 +12,10 @@ export class BrowserNavigationAgent<
   public elementStore: ElementStore<T>
   public pageStatus: PageStatus
 
-  static create(client: AgentClient) {
+  static create(client: AgentClient, eventName: string = "Event") {
     return new BrowserNavigationAgent(
       client,
+      eventName,
       new ElementStore<DOMElementStoreItem>(),
       new PageStatus(),
     )
@@ -22,10 +23,11 @@ export class BrowserNavigationAgent<
 
   constructor(
     client: AgentClient,
+    eventName: string,
     elementStore: ElementStore<T>,
     pageStatus: PageStatus,
   ) {
-    super(client)
+    super(client, eventName)
     this.elementStore = elementStore
     this.pageStatus = pageStatus
   }

@@ -1,4 +1,6 @@
+import { Item, computeItemsPrompt } from "./Item"
 import { Tool, ToolFunctionParams } from "./Tool"
+import { AgentEvent } from "./AgentEvent"
 
 export type AgentClient = (message: {
   prompt: string
@@ -9,11 +11,13 @@ export class Agent {
   public content: string
   public systemMessage: string
   public client: AgentClient
+  public event: AgentEvent
 
-  constructor(client: AgentClient) {
+  constructor(client: AgentClient, eventName: string = "Event") {
     this.client = client
     this.content = ""
     this.systemMessage = ""
+    this.event = new AgentEvent(eventName)
   }
 
   check(content: string) {
@@ -158,6 +162,41 @@ ${functionPrompts}
       result.error = e instanceof Error ? e.message : "Unknown Error"
       return result
     }
+  }
+
+  recordEvent(event: string, data: Record<string, any> = {}): this {
+    this.event.record(event, data)
+    return this
+  }
+
+  clearEvent(): this {
+    this.event.clear()
+    return this
+  }
+
+  async suggestActions(actions: Item[]) {
+    const idsString = await this.logic(
+      `Which actions may user takes next? You must answer by only action ids like JSON array '["id1", "id2",...]' with no other words. If no appropriate action, say '[]', and we will not make any suggestion to user.`,
+      `${this.event.prompt}
+
+${computeItemsPrompt(actions, "Action")}
+`,
+    )
+    let ids: string[] = []
+    try {
+      ids = JSON.parse(idsString) as string[]
+    } catch (e) {
+      const correction = await this.correctionToJSON(
+        idsString,
+        '["id1", "id2"]',
+      )
+      try {
+        ids = JSON.parse(correction) as string[]
+      } catch (e) {
+        ids = []
+      }
+    }
+    return ids.flatMap((id) => actions.find((a) => a.id === id) || [])
   }
 
   async correction(wrong: string, correct: string) {
