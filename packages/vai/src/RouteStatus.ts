@@ -19,7 +19,7 @@ export class RouteStatus {
   computeCurrentPagePrompt() {
     return this.currentPageRoute
       ? `---current page content---
-Page: ${this.currentPageRoute.title}
+Page: ${this.currentPageRoute.id}
 Description: ${this.currentPageRoute.description}
 `
       : ""
