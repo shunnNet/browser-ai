@@ -1,11 +1,12 @@
 {
   "name": "@browser-ai/vai",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "release": "pnpm publish --access public"
   },
   "dependencies": {
     "@browser-ai/ai-expression": "workspace:^",
@@ -32,7 +33,7 @@
   "author": "shunnNet",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.16.0"
   },
   "files": [
     "dist"
