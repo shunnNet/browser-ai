@@ -1,7 +1,8 @@
 # Render Component
 OpneAI gpt return a text response with markdown format in runtime. It is neccessary to render Model response with our component like `RecommendProductList`, `PaymentForm` ...
 
-`Vai` provide simple markdown renderer and prompt template to render model response with component using [vue-llm-rich-message]("https://github.com/shunnNet/vue-llm-rich-message"). You can check the documentation and demo in the link
+`Vai` provide simple markdown renderer and prompt template to render model response with component using [vue-llm-rich-message](https://github.com/shunnNet/vue-llm-rich-message) . You can check the documentation and demo in the link
+
 
 :::info
 **NOTE:** `vue-llm-rich-message` accept `{ component: string, description: string }`. But `Vai` accept `{ id: string, description: string }`

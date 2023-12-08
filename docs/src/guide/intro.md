@@ -22,4 +22,4 @@ The expected use of this library is to securely handle the connection to the lan
 :::
 
 ## Why
-Please refer to [Why](./why.md)
+Please refer to [Why](./why)

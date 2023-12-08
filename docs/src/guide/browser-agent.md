@@ -1,5 +1,5 @@
 # `BrowserNavigationAgent`
-`BrowserNavigationAgent` is sub-class of `Agent`. Make sure you check [Agent's documentation](./agent.md).
+`BrowserNavigationAgent` is sub-class of `Agent`. Make sure you check [Agent's documentation](./agent).
 
 `BrowserNavigationAgent` is a class that can be used for interaction between Model and web pages. It works by retrieving DOM nodes in the webpage that have the `data-ai-id` attribute and including them in the prompt.
 
