@@ -9,8 +9,6 @@ This library can assist you in:
 - Translating user natural language into UI actions or executing specific functions.
 - Navigating and guiding users.
 
-Please also refer to the conceptual demonstration repository  [ai-vue-concept](https://github.com/shunnNet/ai-vue-concept).
-
 ## Features
 - **Simple**: No complicate setting or parameters.
 - **Atomic**: Atomic-level natural language functions. (`.is()`, `.whichIs()`, etc.)
@@ -19,14 +17,8 @@ Please also refer to the conceptual demonstration repository  [ai-vue-concept](h
   - Render component in LLM message
 - **Typed**: Support Typescript.
 
-:::warning
-The expected use of this library is to securely handle the connection to the language model on the server side to prevent API key exposure. So, it is not recommended to connect LLM directly in browser. Alternatively, running the language model directly in the browser is also an option.
-:::
-
-## Why
-Please refer to [Why](./why)
-
 ## Documentation
+[Documentation](https://courageous-manatee-a625e9.netlify.app/)
 
 ## Contribute
 ...preparing
