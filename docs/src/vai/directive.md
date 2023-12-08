@@ -76,7 +76,7 @@ const navigation = async () => {
   if (!route){
     return
   }
-  await router.push({ name: route.id })
+  await router.push({ name: route.data.name })
   // navigation resolved
 
   // But the helpful elements may not exist
@@ -148,7 +148,7 @@ const navigation = async () => {
 
   const route = await vai.whichRoute("can fulfill user's desire")
   // ...
-  await pendingPush({ name: route.id })
+  await pendingPush({ name: route.data.name })
   
   // After release
   const element = await vai.whichElement("can fulfill user's desire")
@@ -185,7 +185,7 @@ For these kind of cases, you can handle it by checking `router.push()` or `pendi
 
 ```ts
 // pendingPush directly forwarding `router.push()` result
-const navigationFailure = await pendingPush({ name: route.id })
+const navigationFailure = await pendingPush({ name: route.data.name })
 
 if (navigationFailure) {
   // handle navigationFailure

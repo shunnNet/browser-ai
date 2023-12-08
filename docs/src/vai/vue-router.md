@@ -25,9 +25,9 @@ app.mount("#app")
 ## Add route meta
 `Vai` will store all route info which has `route.name` and ai meta `route.meta.ai`. These 2 are required.
 
-You must setup `title` and `description` in your `route.meta.ai`, or it will append useless route info to prompt.
+You must setup `name` and `description` in your `route.meta.ai`, or it will throw when start.
 
-- `title`: A descriptive name of the route
+- `name`: A descriptive name of the route
 - `description`: A descrition about content or usage of this route
 
 :::info
@@ -44,7 +44,7 @@ const routes = [
     name: "Index", // required
     meta: {
       ai: {
-        title: "Index", // required
+        name: "Index", // required
         description: // required
           "This is the index page. Include the chatbot interface which is the main function of this website. The chatbot interface is at the top of the page.",
       },
@@ -56,7 +56,7 @@ const routes = [
     name: "Product",
     meta: {
       ai: {
-        title: "Product",
+        name: "Product",
         description:
           "This is the product page. User can see the product information and add the product to the cart.",
       },
@@ -85,10 +85,10 @@ const navigation = async () => {
   vai.check(`User: do you have any product ?`)
 
   const route = await vai.whichRoute("can fulfill user's desire")
-  // typically, the route will be { id: "Product", title: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
+  // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
 
   if (route) {
-    router.push({ name: route.id })
+    router.push({ name: route.data.name })
   } else {
     // handle no route picked...
   }
@@ -104,12 +104,12 @@ const navigation = async () => {
   vai.check(`User: do you have any product ?`)
 
   const route = await vai.whichRoute("can fulfill user's desire")
-  // typically, the route will be { id: "Product", title: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
+  // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
   if (!route){
     // handle no route picked...
     return
   }
-  await router.push({ name: route.id })
+  await router.push({ name: route.data.name })
 
   const element = await vai.whichElement("can fulfill user's desire")
   if (!element){
