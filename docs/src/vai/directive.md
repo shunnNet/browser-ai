@@ -9,10 +9,10 @@ To use `v-ai`, you need setup `vaiPlugin`.
 
 ```ts
 // ...
-import { vaiPlugin } from "@browser-ai/vai"
+import { vaiPlugin, VaiPluginOptions } from "@browser-ai/vai"
 
 // ...
-app.use(vaiPlugin)
+app.use<VaiPluginOptions[]>(vaiPlugin)
 ```
 
 ## Usage

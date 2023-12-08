@@ -12,13 +12,13 @@ Then use it plugin.
 ```ts
 // main.ts
 import { createApp } from "vue"
-import { vaiPlugin } from "@browser-ai/vai"
+import { vaiPlugin, VaiPluginOptions } from "@browser-ai/vai"
 import { openaiClient } from "./api/openai"
 import App from "./App.vue"
 
 const app = createApp(App)
 
-app.use(vaiPlugin)
+app.use<VaiPluginOptions[]>(vaiPlugin)
 
 app.mount("#app")
 ```

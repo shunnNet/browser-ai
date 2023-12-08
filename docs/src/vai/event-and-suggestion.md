@@ -8,12 +8,12 @@ Except the functionaliy inherit from `Agent`, `Vai` integrate `vue-router`, reco
 import { createApp } from "vue"
 import router from "./router"
 import App from "./App.vue"
-import { vaiPlugin } from "@browser-ai/vai"
+import { vaiPlugin, VaiPluginOptions } from "@browser-ai/vai"
 
 const app = createApp(App)
 
 // You need include router to activate this feature.
-app.use(router).use(vaiPlugin, { router })
+app.use(router).use<VaiPluginOptions[]>(vaiPlugin, { router })
 
 app.mount("#app")
 ```
