@@ -1,8 +1,19 @@
 # Getting Started
-To install package.
+To install package via package manager.
 
 ```sh
 pnpm install @browser-ai/ai-expression
+```
+
+Also support import via **CDN**
+
+```html
+<script src="https://unpkg.com/@browser-ai/ai-expression"></script>
+<script>
+// Then access all features from `AiExpression`
+window.AiExpression
+window.AiExpression.Agent
+</script>
 ```
 
 ## 1. Setup your client

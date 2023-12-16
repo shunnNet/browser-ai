@@ -25,6 +25,20 @@ app.mount("#app")
 
 This is the recommended installation method, and you will gradually see some other uses in the subsequent documentation.
 
+### Via CDN
+Also support import via **CDN**
+
+```html
+<!-- Load Vue first -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/@browser-ai/vai"></script>
+<script>
+// Then access all features from `Vai`
+window.Vai
+window.Vai.vaiPlugin
+</script>
+```
+
 ## Init Agent
 `Vai` also provide a `VueAgent` (a type of `Agent`), so it inherit all methods from `Agent`
 
