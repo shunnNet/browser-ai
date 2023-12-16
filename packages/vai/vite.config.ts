@@ -19,7 +19,20 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "Vai",
-      fileName: "index",
+      formats: ["es", "umd", "cjs"],
+      fileName: (format, entryAlias) => {
+        if (entryAlias === "index") {
+          switch (format) {
+            case "es":
+              return "index.js"
+            case "umd":
+              return "umd/index.js"
+            case "cjs":
+              return "index.cjs"
+          }
+        }
+        return "index"
+      },
     },
     rollupOptions: {
       external: ["vue", "vue-router"],
