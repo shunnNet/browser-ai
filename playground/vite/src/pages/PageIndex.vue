@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createVai } from "@browser-ai/vai"
-import { chatgptAgentClient } from "@/api/openai"
+import { chatgptAgentClient } from "../api/openai"
 
 const vai = createVai(chatgptAgentClient)
 const vaiGuider = createVai(chatgptAgentClient)
