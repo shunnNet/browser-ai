@@ -15,18 +15,8 @@ export default defineConfig({
     copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "agent-operators",
+      name: "AiExpression",
       fileName: "index",
-    },
-    rollupOptions: {
-      external: ["vue"],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          vue: "Vue",
-        },
-      },
     },
   },
 })

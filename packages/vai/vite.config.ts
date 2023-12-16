@@ -4,13 +4,9 @@ import vue from "@vitejs/plugin-vue"
 import dts from "vite-plugin-dts"
 
 // https://vitejs.dev/config/
-// https://vitejs.dev/guide/build.html#library-mode
+
 export default defineConfig({
-  plugins: [
-    vue(),
-    dts({ rollupTypes: true }),
-    // msw({ handlers, mode: "browser" }),
-  ],
+  plugins: [vue(), dts({ rollupTypes: true })],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
@@ -18,9 +14,11 @@ export default defineConfig({
   },
   build: {
     copyPublicDir: false,
+
+    // https://vitejs.dev/guide/build.html#library-mode
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "vai",
+      name: "Vai",
       fileName: "index",
     },
     rollupOptions: {
@@ -30,6 +28,7 @@ export default defineConfig({
         // for externalized deps
         globals: {
           vue: "Vue",
+          "vue-router": "VueRouter",
         },
       },
     },
