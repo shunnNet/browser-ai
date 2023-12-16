@@ -5,10 +5,10 @@ To install package via package manager.
 pnpm install @browser-ai/ai-expression
 ```
 
-Also support import via **CDN**
+### Via **CDN**
 
 ```html
-<script src="https://unpkg.com/@browser-ai/ai-expression"></script>
+<script src="https://unpkg.com/@browser-ai/ai-expression/dist/umd/index.js"></script>
 <script>
 // Then access all features from `AiExpression`
 window.AiExpression

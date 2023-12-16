@@ -31,7 +31,7 @@ Also support import via **CDN**
 ```html
 <!-- Load Vue first -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://unpkg.com/@browser-ai/vai"></script>
+<script src="https://unpkg.com/@browser-ai/vai/dist/umd/index.js"></script>
 <script>
 // Then access all features from `Vai`
 window.Vai
