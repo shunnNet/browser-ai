@@ -12,13 +12,13 @@
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.0"
   },
-  "main": "dist/index.umd.cjs",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.umd.cjs"
+      "require": "./dist/index.cjs"
     }
   },
   "author": "shunnNet",

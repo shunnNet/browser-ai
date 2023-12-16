@@ -16,7 +16,20 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "AiExpression",
-      fileName: "index",
+      formats: ["es", "umd", "cjs"],
+      fileName: (format, entryAlias) => {
+        if (entryAlias === "index") {
+          switch (format) {
+            case "es":
+              return "index.js"
+            case "umd":
+              return "index.umd.js"
+            case "cjs":
+              return "index.cjs"
+          }
+        }
+        return "index"
+      },
     },
   },
 })
