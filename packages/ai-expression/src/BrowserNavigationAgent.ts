@@ -1,6 +1,8 @@
-import { Agent, AgentClient } from "./Agent"
+import { Agent } from "./Agent"
+import type { AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
+import type { TPromptTemplateDiction } from "./types"
 
 type DOMElementStoreItem = ElementStoreItem & {
   el: HTMLElement
@@ -12,12 +14,17 @@ export class BrowserNavigationAgent<
   public elementStore: ElementStore<T>
   public pageStatus: PageStatus
 
-  static create(client: AgentClient, eventName: string = "Event") {
+  static create(
+    client: AgentClient,
+    eventName: string = "Event",
+    promptTemplate: Partial<TPromptTemplateDiction> = {},
+  ) {
     return new BrowserNavigationAgent(
       client,
       eventName,
       new ElementStore<DOMElementStoreItem>(),
       new PageStatus(),
+      promptTemplate,
     )
   }
 
@@ -26,14 +33,15 @@ export class BrowserNavigationAgent<
     eventName: string,
     elementStore: ElementStore<T>,
     pageStatus: PageStatus,
+    promptTemplate: Partial<TPromptTemplateDiction> = {},
   ) {
-    super(client, eventName)
+    super(client, eventName, promptTemplate)
     this.elementStore = elementStore
     this.pageStatus = pageStatus
   }
   async whichElement(description: string) {
     let id = await this.logic(
-      `Which element ${description}? You must answer by only 1 element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
+      this.promptTemplate.ELEMENT(description),
       this.elementStore.computePrompt(),
     )
     if (!this.elementStore.getElementById(id) && id !== "no") {
@@ -48,7 +56,7 @@ export class BrowserNavigationAgent<
 
   async whichElements(description: string) {
     const idsString = await this.logic(
-      `Which elements ${description}? You must answer by only element ids like JSON array '["id1", "id2",...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
+      this.promptTemplate.ELEMENTS(description),
       this.elementStore.computePrompt(),
     )
     let ids: string[] = []

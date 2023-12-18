@@ -7,6 +7,7 @@ import { connectVueRouter } from "./connectVueRouter"
 import { PROVIDE_KEY } from "./constant"
 import { VaiPluginOptions, CreateAgent } from "./types"
 import { createRouterWaiter } from "./routerWaiter"
+import { TPromptTemplateDiction } from "@browser-ai/ai-expression"
 
 export default {
   install(app, options = {}) {
@@ -24,13 +25,17 @@ export default {
     }
     app.provide(PROVIDE_KEY.ROUTE_STATUS, routeStatus)
 
-    const createVai: CreateAgent = (client: AgentClient) =>
+    const createVai: CreateAgent = (
+      client: AgentClient,
+      promptTemplate?: TPromptTemplateDiction,
+    ) =>
       new VueAgent(
         client,
         vueElementStore,
         pageStatus,
         routeStatus as RouteStatus,
         agentEvent,
+        promptTemplate,
       )
     app.provide(PROVIDE_KEY.CREATE_VAI, createVai)
     app.provide(PROVIDE_KEY.PAGE_STATUS, pageStatus)
