@@ -1,4 +1,4 @@
-import { Item, computeItemsPrompt } from "./Item"
+import { Item } from "./Item"
 
 export type ElementStoreItem = Pick<Item, "id" | "description">
 
@@ -6,10 +6,6 @@ export class ElementStore<T extends ElementStoreItem = ElementStoreItem> {
   public elements: Record<string, T>
   constructor() {
     this.elements = {}
-  }
-
-  computePrompt(): string {
-    return computeItemsPrompt(Object.values(this.elements), "Element")
   }
 
   getElementIds() {

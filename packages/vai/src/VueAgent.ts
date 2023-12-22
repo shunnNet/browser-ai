@@ -10,11 +10,11 @@ import {
   computeFormatHint,
   ComponentOption,
 } from "@crazydos/vue-llm-rich-message"
-import { WHICH_ROUTE } from "./prompt"
-import type { TVaiPromptTemplateDiction } from "./types"
+import { VaiPrompt } from "./prompt"
 
 export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
   protected routeStatus: RouteStatus
+  public prompt: VaiPrompt = new VaiPrompt()
 
   constructor(
     client: AgentClient,
@@ -22,23 +22,23 @@ export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
     pageStatus: PageStatus,
     routeStatus: RouteStatus,
     agentEvent?: AgentEvent,
-    promptTemplate: Partial<TVaiPromptTemplateDiction> = {},
+    prompt?: VaiPrompt,
   ) {
-    super(client, "Event", elementStore, pageStatus, {
-      WHICH_ROUTE,
-      ...promptTemplate,
-    })
+    super(client, "Event", elementStore, pageStatus, prompt)
     this.routeStatus = routeStatus
     this.event = agentEvent || this.event
   }
 
   async whichRoute(description: string): Promise<Route | undefined> {
     let id = await this.logic(
-      this.promptTemplate.WHICH_ROUTE(description),
-      this.routeStatus.computeRoutesPrompt(),
+      this.prompt.whichRoute(
+        description,
+        this.content,
+        this.routeStatus.routes,
+      ),
     )
     if (!this.routeStatus.getRouteById(id)) {
-      id = await this.correctionByChoices(id, this.routeStatus.getRouteIds())
+      id = await this.correctionByChoice(id, this.routeStatus.getRouteIds())
     }
 
     return id ? this.routeStatus.getRouteById(id) : undefined

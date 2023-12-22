@@ -2,7 +2,7 @@ import { Agent } from "./Agent"
 import type { AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
-import type { TPromptTemplateDiction } from "./types"
+import { Prompt } from "./prompt"
 
 type DOMElementStoreItem = ElementStoreItem & {
   el: HTMLElement
@@ -17,7 +17,7 @@ export class BrowserNavigationAgent<
   static create(
     client: AgentClient,
     eventName: string = "Event",
-    promptTemplate: Partial<TPromptTemplateDiction> = {},
+    promptTemplate?: Prompt,
   ) {
     return new BrowserNavigationAgent(
       client,
@@ -33,19 +33,22 @@ export class BrowserNavigationAgent<
     eventName: string,
     elementStore: ElementStore<T>,
     pageStatus: PageStatus,
-    promptTemplate: Partial<TPromptTemplateDiction> = {},
+    prompt?: Prompt,
   ) {
-    super(client, eventName, promptTemplate)
+    super(client, eventName, prompt)
     this.elementStore = elementStore
     this.pageStatus = pageStatus
   }
   async whichElement(description: string) {
     let id = await this.logic(
-      this.promptTemplate.ELEMENT(description),
-      this.elementStore.computePrompt(),
+      this.prompt.element(
+        `which element ${description}`,
+        this.content,
+        Object.values(this.elementStore.elements),
+      ),
     )
     if (!this.elementStore.getElementById(id) && id !== "no") {
-      id = await this.correctionByChoices(
+      id = await this.correctionByChoice(
         id,
         this.elementStore.getElementIds().concat("no"),
       )
@@ -56,9 +59,13 @@ export class BrowserNavigationAgent<
 
   async whichElements(description: string) {
     const idsString = await this.logic(
-      this.promptTemplate.ELEMENTS(description),
-      this.elementStore.computePrompt(),
+      this.prompt.elements(
+        description,
+        this.content,
+        Object(this.elementStore.elements).values(),
+      ),
     )
+
     let ids: string[] = []
     try {
       ids = JSON.parse(idsString) as string[]
@@ -101,13 +108,13 @@ export class BrowserNavigationAgent<
   }
 
   /** TODO: In Beta */
-  async explainThisPage(reason?: string) {
-    const result = await this.logic(
-      `Explain this page ${reason ? "for " + reason : ""}`,
-      this.pageStatus.computePrompt() +
-        "\n" +
-        this.elementStore.computePrompt(),
-    )
-    return result
-  }
+  // async explainThisPage(reason?: string) {
+  //   const result = await this.logic(
+  //     `Explain this page ${reason ? "for " + reason : ""}`,
+  //     this.pageStatus.computePrompt() +
+  //       "\n" +
+  //       this.elementStore.computePrompt(),
+  //   )
+  //   return result
+  // }
 }

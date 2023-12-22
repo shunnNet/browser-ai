@@ -1,8 +1,7 @@
-import { Item, computeItemsPrompt } from "./Item"
+import { Item } from "./Item"
 import { Tool, ToolFunctionParams } from "./Tool"
 import { AgentEvent } from "./AgentEvent"
-import * as PROMPT from "./prompt"
-import { TPromptTemplateDiction } from "./types"
+import { Prompt } from "./prompt"
 
 export type AgentClient = (message: {
   prompt: string
@@ -14,18 +13,18 @@ export class Agent {
   public systemMessage: string
   public client: AgentClient
   public event: AgentEvent
-  protected promptTemplate: TPromptTemplateDiction
+  public prompt: Prompt
 
   constructor(
     client: AgentClient,
     eventName: string = "Event",
-    promptTemplate: Partial<TPromptTemplateDiction> = {},
+    prompt: Prompt = new Prompt(),
   ) {
     this.client = client
     this.content = ""
     this.systemMessage = ""
     this.event = new AgentEvent(eventName)
-    this.promptTemplate = { ...PROMPT, ...promptTemplate }
+    this.prompt = prompt
   }
 
   check(content: string) {
@@ -38,39 +37,19 @@ export class Agent {
     return this
   }
 
-  computePrompt(logicMessage: string, appendix?: string) {
-    return this.promptTemplate.BASE(logicMessage, this.content, appendix)
-  }
-
-  async logic(logicMessage: string, appendix?: string) {
+  async logic(prompt: string) {
     const message = await this.client({
-      prompt: this.computePrompt(logicMessage, appendix),
+      prompt,
       systemMessage: this.systemMessage,
     })
     return message
   }
 
-  async does(purpose: string) {
-    let message = await this.logic(this.promptTemplate.YES_NO(purpose, "Does"))
+  async yesNo(question: string) {
+    let message = await this.logic(this.prompt.yesNo(question, this.content))
     const choices = ["yes", "no", "none"]
     if (!choices.includes(message)) {
-      message = await this.correctionByChoices(message, choices)
-    }
-
-    if (message === "yes") {
-      return true
-    } else if (message === "no") {
-      return false
-    } else {
-      return
-    }
-  }
-  async is(statement: string) {
-    let message = await this.logic(this.promptTemplate.YES_NO(statement, "Is"))
-
-    const choices = ["yes", "no", "none"]
-    if (!choices.includes(message)) {
-      message = await this.correctionByChoices(message, choices)
+      message = await this.correctionByChoice(message, choices)
     }
 
     if (message === "yes") {
@@ -82,17 +61,59 @@ export class Agent {
     }
   }
 
-  async whichIs(purpose: string, choices: string[]) {
+  async does(question: string) {
+    return this.yesNo(`Does ${question}`)
+  }
+
+  async is(question: string) {
+    return this.yesNo(`Is ${question}`)
+  }
+
+  async choice(question: string, choices: string[]) {
     let message = await this.logic(
-      this.promptTemplate.CHOICES(purpose, choices),
+      this.prompt.cboice(question, this.content, choices),
     )
-
-    const _choices = choices.concat("none")
-    if (!_choices.includes(message)) {
-      message = await this.correctionByChoices(message, _choices)
+    if (!choices.includes(message)) {
+      message = await this.correctionByChoice(message, choices)
     }
-
     return message
+  }
+
+  async choices(question: string, choices: string[], max: number = 3) {
+    const message = await this.logic(
+      this.prompt.cboices(question, this.content, choices, max),
+    )
+    try {
+      const parsed = JSON.parse(message) as string[]
+      if (parsed.every((p) => choices.includes(p))) {
+        return parsed
+      } else {
+        throw new Error(`Invalid anwser from agent: ${message}`)
+      }
+    } catch (e) {
+      const correction = await this.correctionToJSON(
+        message,
+        JSON.stringify(choices),
+      )
+      try {
+        const parsed = JSON.parse(correction) as string[]
+        if (parsed.every((p) => choices.includes(p))) {
+          return parsed
+        } else {
+          throw new Error(`Invalid anwser from agent: ${correction}`)
+        }
+      } catch (e) {
+        return []
+      }
+    }
+  }
+
+  async whichOneIs(purpose: string, choices: string[]) {
+    return this.choice(`Which one is ${purpose}`, choices)
+  }
+
+  async whichOnesAre(purpose: string, choices: string[]) {
+    return this.choices(`Which ones are ${purpose}`, choices)
   }
 
   async pickTool(tools: Tool<any>[]) {
@@ -107,7 +128,7 @@ export class Agent {
       useIt: () => {},
       error: undefined,
     }
-    const prompt = this.promptTemplate.PICK_TOOL(this.content, tools)
+    const prompt = this.prompt.pickTool(this.content, tools)
 
     const response = await this.client({ prompt })
     try {
@@ -148,15 +169,16 @@ export class Agent {
     return this
   }
 
+  // TODO: make suggestAction prompt not combine like this, it should be decide in prompt.suggestActions()
   async suggestActions(actions: Item[]) {
-    // TODO: maybe is not a good idea to customize like this ?
-
     const idsString = await this.logic(
-      this.promptTemplate.SUGGEST_ACTIONS(),
-      `${this.event.prompt}
-
-${computeItemsPrompt(actions, "Action")}
-`,
+      this.prompt.suggestActions(
+        this.prompt.event(
+          this.event.name,
+          this.event.history.map((item) => `${item.event}`).reverse(),
+        ),
+        actions,
+      ),
     )
     let ids: string[] = []
     try {
@@ -177,28 +199,25 @@ ${computeItemsPrompt(actions, "Action")}
 
   async correction(wrong: string, correct: string) {
     return await this.client({
-      prompt: this.promptTemplate.CORRECTION(wrong, correct),
+      prompt: this.prompt.correction(wrong, correct),
     })
   }
 
-  async correctionByChoices(wrong: string, choices: string[]) {
+  async correctionByChoice(wrong: string, choices: string[]) {
     return await this.client({
-      prompt: this.promptTemplate.CORRECTION_CHOICES(wrong, choices),
+      prompt: this.prompt.correctionChoice(wrong, choices),
     })
   }
 
   async correctionToJSON(wrong: string, hint?: string) {
     return await this.client({
-      prompt: this.promptTemplate.CORRECTION_JSON(wrong, hint),
+      prompt: this.prompt.correctionJSON(wrong, hint),
     })
   }
 
   async correctionWithSentencesRequired(wrong: string, sentences: string[]) {
     return await this.client({
-      prompt: this.promptTemplate.CORRECTION_REQUIRED_SENTENCES(
-        wrong,
-        sentences,
-      ),
+      prompt: this.prompt.correctionRequiredSentence(wrong, sentences),
     })
   }
 }

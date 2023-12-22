@@ -7,10 +7,4 @@ export class PageStatus {
   setPageStatus(status: string) {
     this.status = status
   }
-
-  computePrompt(): string {
-    return `---Current Page Status---
-${this.status}
-`
-  }
 }

@@ -14,15 +14,6 @@ export class AgentEvent {
     this.name = name
   }
 
-  get prompt(): string {
-    return `---${this.name} (Top-down: sorted from recent to distant in time)---
-${this.history
-  .map((item) => `${item.event}`)
-  .reverse()
-  .join("\n")}
-`
-  }
-
   get last(): HistoryItem | undefined {
     return this.history[this.history.length - 1]
   }
