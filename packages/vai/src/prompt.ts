@@ -1,11 +1,11 @@
-import { Prompt } from "@browser-ai/ai-expression"
+import { BaiPrompt } from "@browser-ai/bai"
 import type { Route } from "./RouteStatus"
 
 export function WHICH_ROUTE(description: string) {
   return `Which route ${description}? You must answer by only route id with no other words. If no appropriate route, say 'no', and the other agent will navigate user to other place.`
 }
 
-export class VaiPrompt extends Prompt {
+export class VaiPrompt extends BaiPrompt {
   whichRoute(question: string, content: string, routes: Route[]) {
     return this.question(
       question,

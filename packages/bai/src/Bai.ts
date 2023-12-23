@@ -1,25 +1,26 @@
-import { Agent } from "./Agent"
-import type { AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
-import { Prompt } from "./prompt"
+import { Agent, Prompt } from "@browser-ai/ai-expression"
+import type { AgentClient } from "@browser-ai/ai-expression"
+import { BaiPrompt } from "./prompt"
 
 type DOMElementStoreItem = ElementStoreItem & {
   el: HTMLElement
 }
 
-export class BrowserNavigationAgent<
+export class Bai<
   T extends DOMElementStoreItem = DOMElementStoreItem,
 > extends Agent {
   public elementStore: ElementStore<T>
   public pageStatus: PageStatus
+  public prompt: BaiPrompt = new BaiPrompt()
 
   static create(
     client: AgentClient,
     eventName: string = "Event",
-    promptTemplate?: Prompt,
+    promptTemplate?: BaiPrompt,
   ) {
-    return new BrowserNavigationAgent(
+    return new Bai(
       client,
       eventName,
       new ElementStore<DOMElementStoreItem>(),

@@ -9,6 +9,6 @@ export * from "./types"
 export * from "./constant"
 export * from "./render"
 export * from "./useAgentConversation"
-export * from "@browser-ai/ai-expression"
+export * from "@browser-ai/bai"
 import vaiPlugin from "./plugin"
 export { vaiPlugin }

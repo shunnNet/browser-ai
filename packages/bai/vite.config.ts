@@ -10,7 +10,7 @@ export default defineConfig({
     copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "AiExpression",
+      name: "Bai",
       formats: ["es", "umd", "cjs"],
       fileName: (format, entryAlias) => {
         if (entryAlias === "index") {

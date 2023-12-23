@@ -1,6 +1,6 @@
 import { Router, RouteMeta } from "vue-router"
 import { RouteStatus } from "./RouteStatus"
-import { AgentEvent } from "@browser-ai/ai-expression"
+import { AgentEvent } from "@browser-ai/bai"
 
 type RouteMetaAI = RouteMeta & {
   ai?: {

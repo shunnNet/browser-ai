@@ -1,4 +1,4 @@
-import { Item } from "@browser-ai/ai-expression"
+import { Item } from "@browser-ai/bai"
 
 export type Route = Item
 

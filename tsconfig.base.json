@@ -15,6 +15,9 @@
       "@browser-ai/ai-expression": [
         "./packages/ai-expression/src/index.ts"
       ],
+      "@browser-ai/bai": [
+        "./packages/bai/src/index.ts"
+      ],
       "@browser-ai/vai": [
         "./packages/vai/src/index.ts"
       ]

@@ -1,4 +1,4 @@
-import { Item } from "./Item"
+import type { Item } from "@browser-ai/ai-expression"
 
 export type ElementStoreItem = Pick<Item, "id" | "description">
 

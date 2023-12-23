@@ -1,9 +1,4 @@
-import {
-  BrowserNavigationAgent,
-  AgentClient,
-  PageStatus,
-  AgentEvent,
-} from "@browser-ai/ai-expression"
+import { Bai, AgentClient, PageStatus, AgentEvent } from "@browser-ai/bai"
 import { VueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
 import {
@@ -12,7 +7,7 @@ import {
 } from "@crazydos/vue-llm-rich-message"
 import { VaiPrompt } from "./prompt"
 
-export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
+export class VueAgent extends Bai<VueElementStoreItem> {
   protected routeStatus: RouteStatus
   public prompt: VaiPrompt = new VaiPrompt()
 
