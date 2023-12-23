@@ -1,7 +1,8 @@
 import { Plugin } from "vue"
 import { useVaiDirective } from "./directives"
 import { createVueElementStore } from "./vueElementStore"
-import { RouteStatus, VueAgent } from "."
+import { Vai } from "./Vai"
+import { RouteStatus } from "./RouteStatus"
 import { AgentEvent, PageStatus } from "@browser-ai/bai"
 import { connectVueRouter } from "./connectVueRouter"
 import { PROVIDE_KEY } from "./constant"
@@ -25,7 +26,7 @@ export default {
     app.provide(PROVIDE_KEY.ROUTE_STATUS, routeStatus)
 
     const createVai: CreateAgent = (client, prompt) =>
-      new VueAgent(
+      new Vai(
         client,
         vueElementStore,
         pageStatus,

@@ -3,7 +3,7 @@ import { inject } from "vue"
 import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
 import { RouteStatus } from "./RouteStatus"
-import { VueAgent } from "./VueAgent"
+import { Vai } from "./Vai"
 import { VueElementStore } from "./vueElementStore"
 import { RouterWaiter } from "./routerWaiter"
 import { VaiPrompt } from "./prompt"
@@ -15,11 +15,11 @@ export const createVai = (client: AgentClient, prompt?: VaiPrompt) => {
 }
 
 /**
- * Get global `VueAgent` instance. Require register plugin first. Or will throw Error
- * The global `VueAgent` instance is created by `createVai` with global state with `RouteStatus`, `PageStatus`, `VueElementStore`.
+ * Get global `Vai` instance. Require register plugin first. Or will throw Error
+ * The global `Vai` instance is created by `createVai` with global state with `RouteStatus`, `PageStatus`, `VueElementStore`.
  * */
 export const useVai = () => {
-  const vai = inject<VueAgent>(PROVIDE_KEY.VAI)
+  const vai = inject<Vai>(PROVIDE_KEY.VAI)
   if (!vai) {
     throw new Error("vai not provided. You should register plugin first.")
   }

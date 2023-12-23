@@ -1,5 +1,5 @@
 export * from "./compositions"
-export * from "./VueAgent"
+export * from "./Vai"
 export * from "./directives"
 export * from "./connectVueRouter"
 export * from "./routerWaiter"
