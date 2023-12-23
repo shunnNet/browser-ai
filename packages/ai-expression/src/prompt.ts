@@ -61,19 +61,31 @@ ${this.section("Anwser", answer || "")}
     )
   }
 
-  items(items: Item[], type: string = "Item") {
+  items(items: Item[], name: string = "Item") {
     return items
       .map((item) => {
         return this.section(
-          `${type} id:${item.id}`,
+          `${name} id:${item.id}`,
           `
         Name: ${item.id}
+        Type: ${item.type || name}
         Description: ${item.description}
         `,
           2,
         )
       })
       .join("\n\n")
+  }
+
+  whichItem(question: string, content: string, items: Item[], name?: string) {
+    return this.question(
+      `Which item ${question}`,
+      content,
+      `Below are available items. You must answer by only 1 item id from below elements with no other words. If no appropriate item, say '${
+        this.none
+      }'.
+${this.items(items, name)}`,
+    )
   }
 
   section(name: string, content: string, level: number = 3) {
@@ -103,6 +115,7 @@ ${this.items(actions, "Action")}
       tools.map<Item>((t) => {
         return {
           id: t.name,
+          type: "Function",
           description: JSON.stringify(t.schema),
         }
       }),

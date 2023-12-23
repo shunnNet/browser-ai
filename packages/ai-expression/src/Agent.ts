@@ -190,6 +190,18 @@ export class Agent {
     return this.choices(`Which ones are ${purpose}`, choices)
   }
 
+  // TODO: Not good when repeat, but one time may work
+  async whichItem(question: string, items: Item[], name?: string) {
+    const message = await this.logic(
+      this.prompt.whichItem(question, this.content, items, name),
+    )
+    if (items.map((i) => i.id).includes(message)) {
+      return items.find((i) => i.id === message) as Item
+    } else {
+      return null
+    }
+  }
+
   async pickTool(tools: Tool<any>[]) {
     const result: {
       func: string
