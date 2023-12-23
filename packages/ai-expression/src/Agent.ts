@@ -61,7 +61,8 @@ export class Agent {
     let message = await this.logic(
       this.prompt.cboice(question, this.content, choices),
     )
-    if (!choices.includes(message)) {
+
+    if (!choices.concat(this.prompt.none).includes(message)) {
       message = await this.correctionByChoice(message, choices)
     }
     return message
@@ -158,6 +159,7 @@ export class Agent {
   }
 
   // TODO: make suggestAction prompt not combine like this, it should be decide in prompt.suggestActions()
+  // TODO: llm always return full array to me (laugh)
   async suggestActions(actions: Item[]) {
     const idsString = await this.logic(
       this.prompt.suggestActions(
