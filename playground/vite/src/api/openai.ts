@@ -38,6 +38,7 @@ export const chatgptAgentClient: AgentClient = async ({
       content: systemMessage,
     })
   }
+  console.log(prompt)
   messages.push({
     role: "user",
     content: prompt,
@@ -47,6 +48,7 @@ export const chatgptAgentClient: AgentClient = async ({
     temperature: 0,
     messages,
   })
+  console.log(message)
 
   return message as string
 }
