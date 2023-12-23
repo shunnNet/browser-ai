@@ -43,6 +43,32 @@ export class Agent {
     return this
   }
 
+  async withContext(
+    message: string | { content: string; systemMessage: string },
+    func: () => any,
+  ): Promise<any> {
+    const _originalContent = this.content
+    const _originalSystemMessage = this.systemMessage
+    const _content = typeof message === "string" ? message : message.content
+    const _sm =
+      typeof message === "string"
+        ? _originalSystemMessage
+        : message.systemMessage
+
+    this.check(_content)
+    this.systemMessage = _sm
+    try {
+      await func()
+    } catch (e) {
+      this.check(_originalContent)
+      this.systemMessage = _originalSystemMessage
+      throw e
+    }
+
+    this.check(_originalContent)
+    this.systemMessage = _originalSystemMessage
+  }
+
   async logic(prompt: string) {
     const message = await this.client({
       prompt,
