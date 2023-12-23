@@ -3,9 +3,11 @@ import type { Tool } from "./Tool"
 
 export class Prompt {
   spliter: string
+  none: string
 
-  constructor(spliter: string = "-") {
+  constructor(spliter: string = "-", none: string = "I dont know") {
     this.spliter = spliter
+    this.none = none
   }
 
   question(
@@ -31,7 +33,7 @@ ${this.section("Anwser", answer || "")}
     return this.question(
       question,
       content,
-      `Answer by "yes" or "no" with no other words. If you don't know, answer "none"`,
+      `Answer by "yes" or "no" with no other words. If you don't know, answer "${this.none}"`,
     )
   }
 
@@ -41,7 +43,9 @@ ${this.section("Anwser", answer || "")}
       content,
       `You must answer with one of these: ${choices
         .map((c) => `"${c}"`)
-        .join(",")} with no other words. If you don't know, anwser "none"`,
+        .join(",")} with no other words. If you don't know, anwser "${
+        this.none
+      }"`,
     )
   }
 

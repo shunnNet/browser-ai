@@ -10,7 +10,9 @@ export class VaiPrompt extends Prompt {
     return this.question(
       question,
       content,
-      `Below are available page. You must answer by only 1 page id from below pages with no other words, the other agent will navigate user to the place. If no appropriate page, say 'no', 
+      `Below are available page. You must answer by only 1 page id from below pages with no other words, the other agent will navigate user to the place. If no appropriate page, say "${
+        this.none
+      }", 
 ${this.items(routes, "Page")}`,
     )
   }
