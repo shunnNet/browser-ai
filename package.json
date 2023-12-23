@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "prepare": "node scripts/prepare.js",
-    "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm --filter vite dev",
     "build:vai": "pnpm --filter vai build",
+    "build:bai": "pnpm --filter bai build",
     "build:exp": "pnpm --filter ai-expression build",
+    "build": "pnpm build:exp && pnpm build:bai && pnpm build:vai",
     "docs:dev": "vitepress dev docs --port 5174",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs --port 5174"
