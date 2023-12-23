@@ -6,11 +6,12 @@ import { RouteStatus } from "./RouteStatus"
 import { VueAgent } from "./VueAgent"
 import { VueElementStore } from "./vueElementStore"
 import { RouterWaiter } from "./routerWaiter"
+import { VaiPrompt } from "./prompt"
 
 /** Create Vai with global state with `RouteStatus`, `PageStatus`, `VueElementStore`. Require register plugin first. */
-export const createVai = (client: AgentClient) => {
-  const createVai = useCreateVai()
-  return createVai(client)
+export const createVai = (client: AgentClient, prompt?: VaiPrompt) => {
+  const _createVai = useCreateVai()
+  return _createVai(client, prompt)
 }
 
 /**

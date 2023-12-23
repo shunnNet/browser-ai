@@ -10,9 +10,11 @@ import {
   computeFormatHint,
   ComponentOption,
 } from "@crazydos/vue-llm-rich-message"
+import { VaiPrompt } from "./prompt"
 
 export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
   protected routeStatus: RouteStatus
+  public prompt: VaiPrompt = new VaiPrompt()
 
   constructor(
     client: AgentClient,
@@ -20,19 +22,23 @@ export class VueAgent extends BrowserNavigationAgent<VueElementStoreItem> {
     pageStatus: PageStatus,
     routeStatus: RouteStatus,
     agentEvent?: AgentEvent,
+    prompt?: VaiPrompt,
   ) {
-    super(client, "Event", elementStore, pageStatus)
+    super(client, "Event", elementStore, pageStatus, prompt)
     this.routeStatus = routeStatus
     this.event = agentEvent || this.event
   }
 
   async whichRoute(description: string): Promise<Route | undefined> {
     let id = await this.logic(
-      `Which route ${description}? You must answer by only route id with no other words. If no appropriate route, say 'no', and the other agent will navigate user to other place.`,
-      this.routeStatus.computeRoutesPrompt(),
+      this.prompt.whichRoute(
+        description,
+        this.content,
+        this.routeStatus.routes,
+      ),
     )
     if (!this.routeStatus.getRouteById(id)) {
-      id = await this.correctionByChoices(id, this.routeStatus.getRouteIds())
+      id = await this.correctionByChoice(id, this.routeStatus.getRouteIds())
     }
 
     return id ? this.routeStatus.getRouteById(id) : undefined

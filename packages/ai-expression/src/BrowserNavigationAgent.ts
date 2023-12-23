@@ -1,6 +1,8 @@
-import { Agent, AgentClient } from "./Agent"
+import { Agent } from "./Agent"
+import type { AgentClient } from "./Agent"
 import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
+import { Prompt } from "./prompt"
 
 type DOMElementStoreItem = ElementStoreItem & {
   el: HTMLElement
@@ -12,12 +14,17 @@ export class BrowserNavigationAgent<
   public elementStore: ElementStore<T>
   public pageStatus: PageStatus
 
-  static create(client: AgentClient, eventName: string = "Event") {
+  static create(
+    client: AgentClient,
+    eventName: string = "Event",
+    promptTemplate?: Prompt,
+  ) {
     return new BrowserNavigationAgent(
       client,
       eventName,
       new ElementStore<DOMElementStoreItem>(),
       new PageStatus(),
+      promptTemplate,
     )
   }
 
@@ -26,18 +33,22 @@ export class BrowserNavigationAgent<
     eventName: string,
     elementStore: ElementStore<T>,
     pageStatus: PageStatus,
+    prompt?: Prompt,
   ) {
-    super(client, eventName)
+    super(client, eventName, prompt)
     this.elementStore = elementStore
     this.pageStatus = pageStatus
   }
   async whichElement(description: string) {
     let id = await this.logic(
-      `Which element ${description}? You must answer by only 1 element id with no other words. If no appropriate element, say 'no', and the other agent will navigate user to other place.`,
-      this.elementStore.computePrompt(),
+      this.prompt.element(
+        `which element ${description}`,
+        this.content,
+        Object.values(this.elementStore.elements),
+      ),
     )
     if (!this.elementStore.getElementById(id) && id !== "no") {
-      id = await this.correctionByChoices(
+      id = await this.correctionByChoice(
         id,
         this.elementStore.getElementIds().concat("no"),
       )
@@ -48,9 +59,13 @@ export class BrowserNavigationAgent<
 
   async whichElements(description: string) {
     const idsString = await this.logic(
-      `Which elements ${description}? You must answer by only element ids like JSON array '["id1", "id2",...]' with no other words. If no appropriate element, say '[]', and the other agent will navigate user to other place.`,
-      this.elementStore.computePrompt(),
+      this.prompt.elements(
+        description,
+        this.content,
+        Object(this.elementStore.elements).values(),
+      ),
     )
+
     let ids: string[] = []
     try {
       ids = JSON.parse(idsString) as string[]
@@ -93,13 +108,13 @@ export class BrowserNavigationAgent<
   }
 
   /** TODO: In Beta */
-  async explainThisPage(reason?: string) {
-    const result = await this.logic(
-      `Explain this page ${reason ? "for " + reason : ""}`,
-      this.pageStatus.computePrompt() +
-        "\n" +
-        this.elementStore.computePrompt(),
-    )
-    return result
-  }
+  // async explainThisPage(reason?: string) {
+  //   const result = await this.logic(
+  //     `Explain this page ${reason ? "for " + reason : ""}`,
+  //     this.pageStatus.computePrompt() +
+  //       "\n" +
+  //       this.elementStore.computePrompt(),
+  //   )
+  //   return result
+  // }
 }

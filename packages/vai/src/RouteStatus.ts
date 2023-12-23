@@ -1,9 +1,9 @@
-import { Item, computeItemsPrompt } from "@browser-ai/ai-expression"
+import { Item } from "@browser-ai/ai-expression"
 
 export type Route = Item
 
 export class RouteStatus {
-  protected routes: Route[]
+  public routes: Route[]
   protected wait: Promise<any>
   public currentPageRoute: Route | null
 
@@ -13,9 +13,6 @@ export class RouteStatus {
     this.wait = Promise.resolve()
   }
 
-  computeRoutesPrompt() {
-    return computeItemsPrompt(this.routes, "Available Page")
-  }
   computeCurrentPagePrompt() {
     return this.currentPageRoute
       ? `---current page content---
