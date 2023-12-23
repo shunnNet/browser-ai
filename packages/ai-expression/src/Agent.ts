@@ -46,19 +46,7 @@ export class Agent {
   }
 
   async yesNo(question: string) {
-    let message = await this.logic(this.prompt.yesNo(question, this.content))
-    const choices = ["yes", "no", "none"]
-    if (!choices.includes(message)) {
-      message = await this.correctionByChoice(message, choices)
-    }
-
-    if (message === "yes") {
-      return true
-    } else if (message === "no") {
-      return false
-    } else {
-      return
-    }
+    return this.choice(question, ["yes", "no"])
   }
 
   async does(question: string) {
