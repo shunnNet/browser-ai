@@ -8,6 +8,12 @@ export type AgentClient = (message: {
   systemMessage?: string
 }) => Promise<string>
 
+export type AgentChoice =
+  | string
+  | [string, () => any]
+  | [() => any]
+  | [string, any]
+
 export class Agent {
   public content: string
   public systemMessage: string
@@ -45,27 +51,80 @@ export class Agent {
     return message
   }
 
-  async yesNo(question: string) {
-    return this.choice(question, ["yes", "no"])
+  async yesNo(question: string, choices?: AgentChoice[]) {
+    const validChoices = ["yes", "no"]
+    let _choices: AgentChoice[] = [
+      ["yes", true],
+      ["no", false],
+    ]
+
+    // TODO: this is a mess, need to refactor
+    if (Array.isArray(choices)) {
+      const check = []
+      for (const c of choices) {
+        if (typeof c === "string") {
+          if (validChoices.includes(c)) {
+            check.push(c)
+          } else {
+            throw new Error("yesNo choices must be 'yes' or 'no', got " + c)
+          }
+        }
+        if (Array.isArray(c) && typeof c[0] !== "function") {
+          if (validChoices.includes(c[0])) {
+            check.push(c[0])
+          } else {
+            throw new Error("yesNo choices must be 'yes' or 'no', got " + c[0])
+          }
+        }
+      }
+      if (check.includes("yes") && check.includes("no")) {
+        _choices = choices
+      } else {
+        throw new Error(
+          "yesNo choices must include 'yes' or 'no', got " + check,
+        )
+      }
+    }
+
+    return this.choice(question, _choices)
   }
 
-  async does(question: string) {
-    return this.yesNo(`Does ${question}`)
+  async does(question: string, choices?: AgentChoice[]) {
+    return this.yesNo(`Does ${question}`, choices)
   }
 
-  async is(question: string) {
-    return this.yesNo(`Is ${question}`)
+  async is(question: string, choices?: AgentChoice[]) {
+    return this.yesNo(`Is ${question}`, choices)
   }
 
-  async choice(question: string, choices: string[]) {
+  async choice(question: string, choices: AgentChoice[]) {
+    let _default: any = () => null
+    const _collection: Record<string, () => any> = {}
+    for (const c of choices) {
+      if (typeof c === "string") {
+        _collection[c] = () => c
+      }
+      if (typeof c === "function") {
+        _default = c
+      }
+      if (Array.isArray(c) && typeof c[0] === "string") {
+        if (typeof c[1] === "function") {
+          _collection[c[0]] = c[1]
+        } else if (c.length > 1) {
+          _collection[c[0]] = () => c[1] as any
+        }
+      }
+    }
+    const _choices = Object.keys(_collection)
+
     let message = await this.logic(
-      this.prompt.cboice(question, this.content, choices),
+      this.prompt.cboice(question, this.content, _choices),
     )
 
-    if (!choices.concat(this.prompt.none).includes(message)) {
-      message = await this.correctionByChoice(message, choices)
+    if (!_choices.concat(this.prompt.none).includes(message)) {
+      message = await this.correctionByChoice(message, _choices)
     }
-    return message
+    return message in _collection ? _collection[message]() : _default()
   }
 
   async choices(question: string, choices: string[], max: number = 3) {
@@ -97,7 +156,7 @@ export class Agent {
     }
   }
 
-  async whichOneIs(purpose: string, choices: string[]) {
+  async whichOneIs(purpose: string, choices: AgentChoice[]) {
     return this.choice(`Which one is ${purpose}`, choices)
   }
 
