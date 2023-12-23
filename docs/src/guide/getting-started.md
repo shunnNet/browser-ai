@@ -2,13 +2,13 @@
 To install package via package manager.
 
 ```sh
-pnpm install @browser-ai/ai-expression
+pnpm install @browser-ai/ai-expression@0.4.3
 ```
 
 ### Via **CDN**
 
 ```html
-<script src="https://unpkg.com/@browser-ai/ai-expression/dist/umd/index.js"></script>
+<script src="https://unpkg.com/@browser-ai/ai-expression@0.4.3/dist/umd/index.js"></script>
 <script>
 // Then access all features from `AiExpression`
 window.AiExpression

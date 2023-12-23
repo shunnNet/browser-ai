@@ -4,7 +4,7 @@
 First, you need to install it.
 
 ```sh
-pnpm install @browser-ai/vai
+pnpm install @browser-ai/vai@0.4.0
 ```
 
 Then use it plugin.
@@ -31,7 +31,7 @@ Also support import via **CDN**
 ```html
 <!-- Load Vue first -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://unpkg.com/@browser-ai/vai/dist/umd/index.js"></script>
+<script src="https://unpkg.com/@browser-ai/vai@0.4.5/dist/umd/index.js"></script>
 <script>
 // Then access all features from `Vai`
 window.Vai
