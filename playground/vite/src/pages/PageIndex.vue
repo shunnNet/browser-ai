@@ -108,6 +108,40 @@ const suggestAction = async () => {
       { id: "go to space", description: "User go to space by spaceship" },
     ])
 }
+
+const whichItem = async () => {
+  vai.withContext(
+    `user: I want to buy a phone, Help me login first, then show me the phone you have in your products.
+you: I will help you login first.
+user: I login already, thankds, please do next step.`,
+    async () => {
+      const item = await vai.whichItem("Can help user?", [
+        // {
+        //   id: "login",
+        //   description: "A function for user login",
+        //   type: "action",
+        //   data: {
+        //     action: () => console.log("User login"),
+        //   },
+        // },
+        {
+          id: "show products",
+          description: "A function for showing products",
+          type: "action",
+          data: {
+            action: () => console.log("User shopping"),
+          },
+        },
+        {
+          id: "Ai Actions Panel",
+          description: "A HTML element which is a panel for showing ai actions",
+          type: "element",
+        },
+      ])
+      console.log(item)
+    },
+  )
+}
 </script>
 <template>
   <div>Index</div>
@@ -131,6 +165,9 @@ const suggestAction = async () => {
     <div>
       <button @click="correction">Correction</button>
       <button @click="correctionByChoice">CorrectionByChoice</button>
+    </div>
+    <div>
+      <button @click="whichItem">whichItem</button>
     </div>
   </div>
 </template>
