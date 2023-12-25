@@ -7,4 +7,5 @@ packages:
   # - "!**/test/**"
   - "packages/*"
   - "playground/*"
+  - "example/*"
   - docs
