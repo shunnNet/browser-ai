@@ -173,4 +173,39 @@ ${sentences.join("\n")}
       `,
     )
   }
+
+  categrorize(
+    content: string,
+    question: string,
+    categories: [string, string[]][],
+  ) {
+    const primaryCategories = categories.map((c) => c[0]).join(", ")
+    const secondaryCategories = categories
+      .map((c) => `--${c[0]} secondary category--` + "\n" + c[1].join("\n"))
+      .join(", ")
+    return this.question(
+      question,
+      content,
+      `Answer by 1 primary category, and 1 of its secondary category from below. You must answer by JSON array like ["primary", "secondary"] with no any other words.` +
+        "\n" +
+        primaryCategories +
+        "\n" +
+        secondaryCategories,
+    )
+  }
+  chooseAndAnswer(content: string, questionGroups: [string, string[]][]) {
+    const primaryCategories = questionGroups.map((c) => c[0]).join(", ")
+    const secondaryCategories = questionGroups
+      .map((c) => `--${c[0]} questions--` + "\n" + c[1].join("\n"))
+      .join("\n\n")
+    return this.question(
+      "Choose 1 category then answer all questions under the chosen category from below." +
+        "\n" +
+        primaryCategories +
+        "\n" +
+        secondaryCategories,
+      content,
+      `Answer by category and all its question's answer by JSON array like ["category", "answer1", "answer2", ...] with no any other words.`,
+    )
+  }
 }

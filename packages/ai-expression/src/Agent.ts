@@ -11,7 +11,7 @@ export type AgentClient = (message: {
 export type AgentChoice =
   | string
   | [string, () => any]
-  | [() => any]
+  | [(...args: any) => any]
   | [string, any]
 
 export class Agent {
@@ -188,6 +188,104 @@ export class Agent {
 
   async whichOnesAre(purpose: string, choices: string[]) {
     return this.choices(`Which ones are ${purpose}`, choices)
+  }
+
+  async categorize(
+    question: string,
+    categories: ([string, AgentChoice[]] | (() => any))[],
+  ) {
+    let _default: any = () => null
+    const diction: Record<string, Record<string, any>> = {}
+    const _normalizedCategories = []
+
+    for (const category of categories) {
+      if (typeof category === "function") {
+        _default = category
+        continue
+      }
+      const [categoryName, items] = category
+
+      const categoryStrategies: Record<string, any> = (diction[categoryName] =
+        {})
+      const _normalized: [string, string[]] = [categoryName, []]
+
+      for (const item of items) {
+        if (typeof item === "string") {
+          categoryStrategies[item] = (r: any) => r
+          _normalized[1].push(item)
+        } else if (typeof item === "function") {
+          _default = item
+          categoryStrategies["_default"] = item
+        } else if (Array.isArray(item) && typeof item[0] === "string") {
+          if (typeof item[1] === "function") {
+            categoryStrategies[item[0]] = item[1]
+            _normalized[1].push(item[0])
+          } else if (item.length > 1) {
+            categoryStrategies[item[0]] = () => item[1] as any
+          }
+        }
+      }
+      _normalizedCategories.push(_normalized)
+    }
+    const prompt = this.prompt.categrorize(
+      question,
+      this.content,
+      _normalizedCategories,
+    )
+    const message = await this.logic(prompt)
+    let payload: any = []
+    try {
+      payload = JSON.parse(message)
+    } catch (e) {
+      return _default()
+    }
+    const [primary, secondary] = payload
+
+    if (!diction[primary]) {
+      return _default()
+    } else if (typeof diction[primary][secondary] !== "function") {
+      return diction[primary]["_default"]?.() || _default()
+    } else {
+      return diction[primary][secondary](payload)
+    }
+  }
+
+  async chooseAndAnswer(
+    questionGroups: (
+      | [string, string[], ((args: any[]) => any)?]
+      | [() => any]
+    )[],
+  ) {
+    const _normalized: any[] = []
+    let _default = () => null
+    const _handlerMap: Record<string, (args: string[]) => any> = {}
+    questionGroups.forEach((question) => {
+      if (typeof question[0] === "function") {
+        _default = question[0]
+      } else {
+        const [questionGroup, answers, func] = question as [
+          string,
+          string[],
+          ((args: any[]) => any) | undefined,
+        ]
+        _normalized.push([questionGroup, answers])
+        _handlerMap[questionGroup] = func || ((r) => r)
+      }
+    })
+
+    const prompt = this.prompt.chooseAndAnswer(this.content, _normalized)
+    const message = await this.logic(prompt)
+    let result: string[] = []
+    try {
+      result = JSON.parse(message)
+    } catch (e) {
+      return _default()
+    }
+    if (_handlerMap[result[0]]) {
+      return _handlerMap[result[0]](result)
+    } else {
+      return _default()
+    }
   }
 
   // TODO: Not good when repeat, but one time may work
