@@ -1,12 +1,12 @@
 import { Directive } from "vue"
-import { VueElementStore } from "./vueElementStore"
+import { VueItemStore } from "./vueItemStore"
 
 type VAiBinding = {
   id: string
   description: string
 }
 
-export const useVaiDirective = (vueElementStore: VueElementStore) => {
+export const useVaiDirective = (vueItemStore: VueItemStore) => {
   // https://stackoverflow.com/questions/71184825/typing-custom-directives
   const vAi = <Directive<HTMLElement, VAiBinding>>{
     created(el, binding, vnode) {
@@ -16,7 +16,10 @@ export const useVaiDirective = (vueElementStore: VueElementStore) => {
       el.dataset[`aiId`] = id
       el.dataset[`aiDescription`] = description
 
-      vueElementStore.setElementById(id, { id, description, el, vnode })
+      vueItemStore.setItemById(
+        id,
+        vueItemStore.createVueItem(id, description, { el, vnode }),
+      )
     },
     beforeUpdate(el, binding, vnode) {
       const id = binding.value.id
@@ -26,15 +29,19 @@ export const useVaiDirective = (vueElementStore: VueElementStore) => {
       el.dataset[`aiDescription`] = description
 
       if (binding.oldValue && binding.oldValue.id !== id) {
-        vueElementStore.deleteElementById(binding.oldValue.id)
+        vueItemStore.deleteItemById(binding.oldValue.id)
       }
-      vueElementStore.setElementById(id, { id, description, el, vnode })
+      vueItemStore.setItemById(
+        id,
+        vueItemStore.createVueItem(id, description, { el, vnode }),
+      )
     },
     beforeUnmount(el) {
       const id = el.dataset["aiId"] as string
-      vueElementStore.deleteElementById(id)
+      vueItemStore.deleteItemById(id)
     },
 
+    // TODO: description using textContent will not work for SSR
     getSSRProps(binding) {
       return {
         "data-ai-id": binding.value.id,

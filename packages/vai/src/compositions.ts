@@ -4,11 +4,11 @@ import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
 import { RouteStatus } from "./RouteStatus"
 import { Vai } from "./Vai"
-import { VueElementStore } from "./vueElementStore"
+import { VueItemStore } from "./vueItemStore"
 import { RouterWaiter } from "./routerWaiter"
 import { VaiPrompt } from "./prompt"
 
-/** Create Vai with global state with `RouteStatus`, `PageStatus`, `VueElementStore`. Require register plugin first. */
+/** Create Vai with global state with `RouteStatus`, `PageStatus`, `VueItemStore`. Require register plugin first. */
 export const createVai = (client: AgentClient, prompt?: VaiPrompt) => {
   const _createVai = useCreateVai()
   return _createVai(client, prompt)
@@ -16,7 +16,7 @@ export const createVai = (client: AgentClient, prompt?: VaiPrompt) => {
 
 /**
  * Get global `Vai` instance. Require register plugin first. Or will throw Error
- * The global `Vai` instance is created by `createVai` with global state with `RouteStatus`, `PageStatus`, `VueElementStore`.
+ * The global `Vai` instance is created by `createVai` with global state with `RouteStatus`, `PageStatus`, `VueItemStore`.
  * */
 export const useVai = () => {
   const vai = inject<Vai>(PROVIDE_KEY.VAI)
@@ -28,7 +28,7 @@ export const useVai = () => {
 
 /**
  * Get global `createVai` function. Require register plugin first.
- * `createVai` use global state with `RouteStatus`, `PageStatus`, `VueElementStore` registered with plugin.
+ * `createVai` use global state with `RouteStatus`, `PageStatus`, `VueItemStore` registered with plugin.
  * */
 export const useCreateVai = () => {
   const createVai = inject<CreateAgent>(PROVIDE_KEY.CREATE_VAI)
@@ -62,16 +62,16 @@ export const useRouteStatus = () => {
   return routeStatus
 }
 
-/** Get global `VueElementStore` instance. Require register plugin first. Or throw Error */
-export const useVueElementStore = () => {
-  const vueElementStore = inject<VueElementStore>(PROVIDE_KEY.VUE_ELEMENT_STORE)
-  if (!vueElementStore) {
+/** Get global `VueItemStore` instance. Require register plugin first. Or throw Error */
+export const useVueItemStore = () => {
+  const VueItemStore = inject<VueItemStore>(PROVIDE_KEY.VUE_ITEM_STORE)
+  if (!VueItemStore) {
     throw new Error(
-      "vueElementStore not provided. You should register plugin first.",
+      "VueItemStore not provided. You should register plugin first.",
     )
   }
 
-  return vueElementStore
+  return VueItemStore
 }
 
 export const useRouterWaiter = () => {

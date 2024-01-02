@@ -1,4 +1,4 @@
-import { Item } from "./Item"
+import { Item, ItemStore } from "./ItemStore"
 import { Tool, ToolFunctionParams } from "./Tool"
 import { AgentEvent } from "./AgentEvent"
 import { Prompt } from "./prompt"
@@ -289,15 +289,16 @@ export class Agent {
   }
 
   // TODO: Not good when repeat, but one time may work
-  async whichItem(question: string, items: Item[], name?: string) {
+  async whichItem(question: string, itemStore: ItemStore, name?: string) {
     const message = await this.logic(
-      this.prompt.whichItem(question, this.content, items, name),
+      this.prompt.whichItem(
+        question,
+        this.content,
+        itemStore.getAllItems(),
+        name,
+      ),
     )
-    if (items.map((i) => i.id).includes(message)) {
-      return items.find((i) => i.id === message) as Item
-    } else {
-      return null
-    }
+    return itemStore.getItemById(message)
   }
 
   async pickTool(tools: Tool<any>[]) {

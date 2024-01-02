@@ -1,17 +1,9 @@
-import { ElementStore, ElementStoreItem } from "./ElementStore"
 import { PageStatus } from "./PageStatus"
-import { Agent, Prompt } from "@browser-ai/ai-expression"
+import { Agent, Prompt, ItemStore } from "@browser-ai/ai-expression"
 import type { AgentClient } from "@browser-ai/ai-expression"
 import { BaiPrompt } from "./prompt"
 
-type DOMElementStoreItem = ElementStoreItem & {
-  el: HTMLElement
-}
-
-export class Bai<
-  T extends DOMElementStoreItem = DOMElementStoreItem,
-> extends Agent {
-  public elementStore: ElementStore<T>
+export class Bai extends Agent {
   public pageStatus: PageStatus
   public prompt: BaiPrompt = new BaiPrompt()
 
@@ -20,51 +12,40 @@ export class Bai<
     eventName: string = "Event",
     promptTemplate?: BaiPrompt,
   ) {
-    return new Bai(
-      client,
-      eventName,
-      new ElementStore<DOMElementStoreItem>(),
-      new PageStatus(),
-      promptTemplate,
-    )
+    return new Bai(client, eventName, new PageStatus(), promptTemplate)
   }
 
   constructor(
     client: AgentClient,
     eventName: string,
-    elementStore: ElementStore<T>,
     pageStatus: PageStatus,
     prompt?: Prompt,
   ) {
     super(client, eventName, prompt)
-    this.elementStore = elementStore
     this.pageStatus = pageStatus
   }
-  async whichElement(description: string) {
+  async whichElement(description: string, itemStore: ItemStore) {
     let id = await this.logic(
       this.prompt.element(
         `which element ${description}`,
         this.content,
-        Object.values(this.elementStore.elements),
+        itemStore.getAllItems(),
       ),
     )
-    if (!this.elementStore.getElementById(id) && id !== "no") {
+    // TODO: replace "no" with I_DONT_KNOW
+    if (!itemStore.getItemById(id) && id !== "no") {
       id = await this.correctionByChoice(
         id,
-        this.elementStore.getElementIds().concat("no"),
+        itemStore.getItemIds().concat("no"),
       )
     }
 
-    return id && this.elementStore.getElementById(id)
+    return id && itemStore.getItemById(id)
   }
 
-  async whichElements(description: string) {
+  async whichElements(description: string, itemStore: ItemStore) {
     const idsString = await this.logic(
-      this.prompt.elements(
-        description,
-        this.content,
-        Object(this.elementStore.elements).values(),
-      ),
+      this.prompt.elements(description, this.content, itemStore.getAllItems()),
     )
 
     let ids: string[] = []
@@ -82,30 +63,7 @@ export class Bai<
       }
     }
 
-    return ids
-      .map((id) => this.elementStore.getElementById(id))
-      .filter((item) => item)
-  }
-
-  collect() {
-    Array.from(document.querySelectorAll<HTMLElement>(`[data-ai-id]`)).forEach(
-      (el) => {
-        // TODO: remove "as T"
-        if (el.dataset.aiId) {
-          this.elementStore.setElementById(el.dataset.aiId, {
-            id: el.dataset.aiId,
-            description: el.dataset.aiDescription || el.textContent || "",
-            el,
-          } as T)
-        }
-      },
-    )
-    return this
-  }
-
-  drop() {
-    this.elementStore.deleteAllElements()
-    return this
+    return ids.map((id) => itemStore.getItemById(id)).filter((item) => item)
   }
 
   /** TODO: In Beta */
@@ -114,7 +72,7 @@ export class Bai<
   //     `Explain this page ${reason ? "for " + reason : ""}`,
   //     this.pageStatus.computePrompt() +
   //       "\n" +
-  //       this.elementStore.computePrompt(),
+  //       itemStore.computePrompt(),
   //   )
   //   return result
   // }

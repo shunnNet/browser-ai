@@ -1,5 +1,5 @@
 export * from "./Agent"
 export { Tool } from "./Tool"
-export * from "./Item"
+export * from "./ItemStore"
 export * from "./AgentEvent"
 export * from "./prompt"

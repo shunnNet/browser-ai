@@ -1,5 +1,4 @@
 import { Bai, AgentClient, PageStatus, AgentEvent } from "@browser-ai/bai"
-import { VueElementStore, VueElementStoreItem } from "./vueElementStore"
 import { RouteStatus, Route } from "./RouteStatus"
 import {
   computeFormatHint,
@@ -7,19 +6,18 @@ import {
 } from "@crazydos/vue-llm-rich-message"
 import { VaiPrompt } from "./prompt"
 
-export class Vai extends Bai<VueElementStoreItem> {
+export class Vai extends Bai {
   protected routeStatus: RouteStatus
   public prompt: VaiPrompt = new VaiPrompt()
 
   constructor(
     client: AgentClient,
-    elementStore: VueElementStore,
     pageStatus: PageStatus,
     routeStatus: RouteStatus,
     agentEvent?: AgentEvent,
     prompt?: VaiPrompt,
   ) {
-    super(client, "Event", elementStore, pageStatus, prompt)
+    super(client, "Event", pageStatus, prompt)
     this.routeStatus = routeStatus
     this.event = agentEvent || this.event
   }
