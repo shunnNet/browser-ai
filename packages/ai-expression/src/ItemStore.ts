@@ -6,6 +6,14 @@ export type Item = {
 }
 
 export class ItemStore<T extends Item = Item> {
+  static fromItems(items: Item[]) {
+    return new ItemStore(
+      items.reduce((acc, item) => {
+        return { ...acc, [item.id]: item }
+      }, {}),
+    )
+  }
+
   static fromStores(stores: ItemStore[]) {
     return new ItemStore(
       stores
