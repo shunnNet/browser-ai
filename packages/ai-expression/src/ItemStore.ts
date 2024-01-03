@@ -1,8 +1,8 @@
 export type Item = {
   id: string
   description: string
-  type?: string
-  data?: Record<string, any>
+  type: string
+  data: Record<string, any>
 }
 
 export class ItemStore<T extends Item = Item> {

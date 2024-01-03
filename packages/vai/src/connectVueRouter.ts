@@ -21,6 +21,7 @@ export const connectVueRouter = (router: Router, event: AgentEvent) => {
       routeStatus.addRoute({
         id: meta.ai.name,
         description: meta.ai.description,
+        type: "Route",
         data: r,
       })
     }
@@ -32,6 +33,7 @@ export const connectVueRouter = (router: Router, event: AgentEvent) => {
       routeStatus.setCurrentRoute({
         id: meta.ai.name,
         description: meta.ai.description,
+        type: "Route",
         data: to,
       })
       pageName = meta.ai.name

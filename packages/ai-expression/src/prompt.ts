@@ -1,4 +1,4 @@
-import type { Item } from "./Item"
+import type { Item } from "./ItemStore"
 import type { Tool } from "./Tool"
 
 export class Prompt {
@@ -115,8 +115,9 @@ ${this.items(actions, "Action")}
       tools.map<Item>((t) => {
         return {
           id: t.name,
-          type: "Function",
           description: JSON.stringify(t.schema),
+          type: "Function",
+          data: {},
         }
       }),
       "Function",
