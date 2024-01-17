@@ -11,7 +11,15 @@ import { createRouterWaiter } from "./routerWaiter"
 
 export default {
   install(app, options = {}) {
-    const vueItemStore = createVueItemStore()
+    if (options.itemIndex) {
+      app.provide(PROVIDE_KEY.VUE_ITEM_INDEX, options.itemIndex)
+      app.directive("ai", useVaiDirective(options.itemIndex))
+    } else {
+      const vueItemStore = createVueItemStore()
+      app.provide(PROVIDE_KEY.VUE_ITEM_STORE, vueItemStore)
+      app.directive("ai", useVaiDirective(vueItemStore))
+    }
+
     const pageStatus = new PageStatus()
     const agentEvent = new AgentEvent("Event")
 
@@ -35,7 +43,5 @@ export default {
       )
     app.provide(PROVIDE_KEY.CREATE_VAI, createVai)
     app.provide(PROVIDE_KEY.PAGE_STATUS, pageStatus)
-    app.provide(PROVIDE_KEY.VUE_ITEM_STORE, vueItemStore)
-    app.directive("ai", useVaiDirective(vueItemStore))
   },
 } as Plugin<VaiPluginOptions>

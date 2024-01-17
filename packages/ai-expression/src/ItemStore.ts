@@ -5,7 +5,30 @@ export type Item = {
   data: Record<string, any>
 }
 
-export class ItemStore<T extends Item = Item> {
+export const createItem = (
+  id: string,
+  description: string,
+  type?: string,
+  data?: Record<string, any>,
+): Item => {
+  return {
+    id,
+    description,
+    type: type || "Item",
+    data: data || {},
+  }
+}
+
+export interface ItemManipulator<T extends Item = Item> {
+  getAllItems(): T[]
+  getItemIds(): string[]
+  getItemById(id: string): T
+  setItemById(id: string, item: T): any
+  deleteItemById(id: string): any
+  deleteAllItems(): any
+}
+
+export class ItemStore<T extends Item = Item> implements ItemManipulator<T> {
   static fromItems(items: Item[]) {
     return new ItemStore(
       items.reduce((acc, item) => {
@@ -26,9 +49,13 @@ export class ItemStore<T extends Item = Item> {
     )
   }
 
-  public items: Record<string, T> = {}
+  protected _items: Record<string, T> = {}
   constructor(items?: Record<string, T>) {
-    this.items = items || {}
+    this._items = items || {}
+  }
+
+  get items() {
+    return this._items
   }
 
   createItem(
@@ -36,7 +63,7 @@ export class ItemStore<T extends Item = Item> {
     description: string,
     type?: string,
     data?: Record<string, any>,
-  ) {
+  ): Item {
     return {
       id,
       description,

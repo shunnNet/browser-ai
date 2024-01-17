@@ -1,4 +1,9 @@
-import { AgentClient, AgentEvent, PageStatus } from "@browser-ai/bai"
+import {
+  AgentClient,
+  AgentEvent,
+  ItemIndexStore,
+  PageStatus,
+} from "@browser-ai/bai"
 import { inject } from "vue"
 import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
@@ -62,7 +67,10 @@ export const useRouteStatus = () => {
   return routeStatus
 }
 
-/** Get global `VueItemStore` instance. Require register plugin first. Or throw Error */
+/**
+ * Get global `VueItemStore` instance. Require register plugin first. Or throw Error
+ * VueItemStore only available when you not provide `itemIndex` option when register plugin.
+ * */
 export const useVueItemStore = () => {
   const VueItemStore = inject<VueItemStore>(PROVIDE_KEY.VUE_ITEM_STORE)
   if (!VueItemStore) {
@@ -72,6 +80,19 @@ export const useVueItemStore = () => {
   }
 
   return VueItemStore
+}
+
+/**
+ * Get global `VueItemIndex` instance. Require register plugin first. Or throw Error
+ * VueItemIndex only available when you provide `itemIndex` option when register plugin.
+ * */
+export const useVueItemIndex = () => {
+  const itemIndex = inject<ItemIndexStore>(PROVIDE_KEY.VUE_ITEM_INDEX)
+  if (!itemIndex) {
+    throw new Error("itemIndex not provided. You should register plugin first.")
+  }
+
+  return itemIndex
 }
 
 export const useRouterWaiter = () => {
