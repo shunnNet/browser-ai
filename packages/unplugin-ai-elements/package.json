@@ -1,0 +1,32 @@
+{
+  "name": "@browser-ai/unplugin-ai-elements",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "linkedom": "^0.16.5",
+    "unplugin": "^1.6.0",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@browser-ai/ai-expression": "workspace:0.5.0-alpha.0",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.9.2",
+    "typescript": "^5.0.2"
+  }
+}
