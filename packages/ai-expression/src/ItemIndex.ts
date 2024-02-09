@@ -7,7 +7,7 @@ export interface VectorStore {
 
 export class ItemIndex extends ItemStore {
   public index: VectorStore
-  constructor(index: VectorStore, items?: Record<string, Item>) {
+  constructor(index: VectorStore, items?: Item[]) {
     super(items)
     this.index = index
   }
