@@ -28,5 +28,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "defu": "^6.1.4",
+    "mitt": "^3.0.1"
+  }
 }
