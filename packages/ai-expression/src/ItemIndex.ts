@@ -31,6 +31,12 @@ export class LayerItemIndex extends LayerItemStore {
   }
   addLayer(id: string, store: ItemStore): void {
     super.addLayer(id, store)
+    store.getItemIds().forEach((id) => {
+      const item = this.getItemById(id)
+      if (item) {
+        this.index.upsert(id, item)
+      }
+    })
     store.emitter.on("create", (event: any) => {
       this.index.upsert(event.id, event.item)
     })
