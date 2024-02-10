@@ -1,3 +1,6 @@
+import defu from "defu"
+import mitt, { Emitter } from "mitt"
+
 export type Item = {
   id: string
   description: string
@@ -19,57 +22,32 @@ export const createItem = (
   }
 }
 
-export interface ItemManipulator<T extends Item = Item> {
-  getAllItems(): T[]
-  getItemIds(): string[]
-  getItemById(id: string): T
-  setItemById(id: string, item: T): any
-  deleteItemById(id: string): any
-  deleteAllItems(): any
+type ItemStoreEvent = {
+  create: { id: string; item: Item }
+  update: { id: string; item: Item }
+  delete: { id: string }
 }
 
-export class ItemStore<T extends Item = Item> implements ItemManipulator<T> {
-  static fromItems(items: Item[]) {
-    return new ItemStore(
-      items.reduce((acc, item) => {
-        return { ...acc, [item.id]: item }
-      }, {}),
-    )
-  }
-
+export class ItemStore {
   static fromStores(stores: ItemStore[]) {
-    return new ItemStore(
-      stores
-        .map((store) => {
-          return store.items
-        })
-        .reduce((acc, items) => {
-          return { ...acc, ...items }
-        }, {}),
-    )
+    return new ItemStore(stores.map((store) => store.getAllItems()).flat())
   }
 
-  protected _items: Record<string, T> = {}
-  constructor(items?: Record<string, T>) {
-    this._items = items || {}
+  protected _items: Record<string, Item> = {}
+  public emitter: Emitter<ItemStoreEvent>
+
+  constructor(items?: Item[]) {
+    this._items = {}
+    this.emitter = mitt<ItemStoreEvent>()
+    if (Array.isArray(items)) {
+      items.forEach((item) => {
+        this.setItemById(item.id, item)
+      })
+    }
   }
 
   get items() {
     return this._items
-  }
-
-  createItem(
-    id: string,
-    description: string,
-    type?: string,
-    data?: Record<string, any>,
-  ): Item {
-    return {
-      id,
-      description,
-      type: type || "Item",
-      data: data || {},
-    }
   }
 
   getAllItems() {
@@ -80,26 +58,57 @@ export class ItemStore<T extends Item = Item> implements ItemManipulator<T> {
     return Object.keys(this.items)
   }
 
-  getItemById(id: string): T {
+  getItemById(id: string): Item {
     return this.items[id]
   }
 
-  setItemById(id: string, item: T): ItemStore<T> {
+  setItemById(id: string, item: Item) {
+    this.emitter.emit(id in this.items ? "create" : "update", { id, item })
     this.items[id] = item
-
-    return this
   }
 
-  deleteItemById(id: string): ItemStore<T> {
+  deleteItemById(id: string) {
+    this.emitter.emit("delete", { id })
     delete this.items[id]
+  }
+}
 
-    return this
+export class LayerItemStore {
+  protected layers: Map<string, ItemStore>
+
+  constructor() {
+    this.layers = new Map()
   }
 
-  deleteAllItems() {
-    Object.keys(this.items).forEach((id) => {
-      this.deleteItemById(id)
-    })
-    return this
+  addLayer(id: string, store: ItemStore) {
+    this.layers.set(id, store)
+  }
+
+  getLayerById(id: string): ItemStore | null {
+    return this.layers.get(id) || null
+  }
+
+  getAllItems(): Item[] {
+    const ids = this.getItemIds()
+    return ids
+      .map((id) => this.getItemById(id))
+      .filter((item) => item !== null) as Item[]
+  }
+
+  getItemById(id: string): Item | null {
+    let collection = {}
+    for (const [, store] of this.layers) {
+      const item = store.getItemById(id)
+      if (item) {
+        collection = defu(collection, item)
+      }
+    }
+    return Object.keys(collection).length > 0 ? (collection as Item) : null
+  }
+
+  getItemIds(): string[] {
+    return Array.from(this.layers.values()).reduce((acc, store) => {
+      return acc.concat(store.getItemIds())
+    }, [] as string[])
   }
 }

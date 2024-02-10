@@ -5,5 +5,7 @@ const isCi = process.env.CI !== undefined
 if (!isCi) {
   console.log("install husky hook")
   console.log("this will configure git config core.hooksPath to .husky")
-  require("husky").install()
+  import("husky").then((husky) => {
+    husky.install()
+  })
 }

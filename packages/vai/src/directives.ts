@@ -1,12 +1,12 @@
 import { Directive } from "vue"
-import { ItemManipulator, createItem } from "@browser-ai/bai"
+import { ItemStore, createItem } from "@browser-ai/bai"
 
 type VAiBinding = {
   id: string
   description: string
 }
 
-export const useVaiDirective = (itemManipulator: ItemManipulator) => {
+export const useVaiDirective = (itemStore: ItemStore) => {
   // https://stackoverflow.com/questions/71184825/typing-custom-directives
   const vAi = <Directive<HTMLElement, VAiBinding>>{
     created(el, binding, vnode) {
@@ -16,7 +16,7 @@ export const useVaiDirective = (itemManipulator: ItemManipulator) => {
       el.dataset[`aiId`] = id
       el.dataset[`aiDescription`] = description
 
-      itemManipulator.setItemById(
+      itemStore.setItemById(
         id,
         createItem(id, description, "element", {
           el,
@@ -32,9 +32,9 @@ export const useVaiDirective = (itemManipulator: ItemManipulator) => {
       el.dataset[`aiDescription`] = description
 
       if (binding.oldValue && binding.oldValue.id !== id) {
-        itemManipulator.deleteItemById(binding.oldValue.id)
+        itemStore.deleteItemById(binding.oldValue.id)
       }
-      itemManipulator.setItemById(
+      itemStore.setItemById(
         id,
         createItem(id, description, "element", {
           el,
@@ -44,7 +44,7 @@ export const useVaiDirective = (itemManipulator: ItemManipulator) => {
     },
     beforeUnmount(el) {
       const id = el.dataset["aiId"] as string
-      itemManipulator.deleteItemById(id)
+      itemStore.deleteItemById(id)
     },
 
     // TODO: description using textContent will not work for SSR

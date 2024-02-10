@@ -11,7 +11,7 @@ Please also refer to the conceptual demonstration repository  [ai-vue-concept](h
 
 ## Features
 - **Simple**: No complicate setting or parameters.
-- **Atomic**: Atomic-level natural language functions. (`.is()`, `.whichIs()`, etc.)
+- **Atomic**: Atomic-level natural language functions. (`.does()`, `.choice()`, etc.)
 - **Framework integration**: (Vue only currently):
   - Easily annotate node, routing information and incorporate prompts
   - Render component in LLM message

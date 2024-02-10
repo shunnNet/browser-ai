@@ -1,4 +1,3 @@
-export * from "./domItemStore"
 export * from "./Bai"
 export * from "./PageStatus"
 export * from "./prompt"

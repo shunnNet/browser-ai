@@ -187,8 +187,9 @@ ${sentences.join("\n")}
     return this.question(
       question,
       content,
-      `Answer by 1 primary category, and 1 of its secondary category from below. You must answer by JSON array like ["primary", "secondary"] with no any other words.` +
-        "\n" +
+      `Answer by 1 primary category, and 1 of its secondary category from below. You must answer by JSON array like ["primary", "secondary"] with no any other words. Answer [] if there is no suitable category.` +
+        "\n\n" +
+        "Primary categories: " +
         primaryCategories +
         "\n" +
         secondaryCategories,

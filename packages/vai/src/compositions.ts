@@ -1,15 +1,17 @@
 import {
   AgentClient,
   AgentEvent,
-  ItemIndexStore,
   PageStatus,
+  ItemStore,
+  LayerItemIndex,
+  LayerItemStore,
+  ItemIndex,
 } from "@browser-ai/bai"
 import { inject } from "vue"
 import { PROVIDE_KEY } from "./constant"
 import { CreateAgent } from "./types"
 import { RouteStatus } from "./RouteStatus"
 import { Vai } from "./Vai"
-import { VueItemStore } from "./vueItemStore"
 import { RouterWaiter } from "./routerWaiter"
 import { VaiPrompt } from "./prompt"
 
@@ -69,10 +71,10 @@ export const useRouteStatus = () => {
 
 /**
  * Get global `VueItemStore` instance. Require register plugin first. Or throw Error
- * VueItemStore only available when you not provide `itemIndex` option when register plugin.
+ * VueItemStore only available when you not provide `vectorStore` and `itemLayer.base` option when register plugin.
  * */
 export const useVueItemStore = () => {
-  const VueItemStore = inject<VueItemStore>(PROVIDE_KEY.VUE_ITEM_STORE)
+  const VueItemStore = inject<ItemStore>(PROVIDE_KEY.VUE_ITEM_STORE)
   if (!VueItemStore) {
     throw new Error(
       "VueItemStore not provided. You should register plugin first.",
@@ -84,12 +86,44 @@ export const useVueItemStore = () => {
 
 /**
  * Get global `VueItemIndex` instance. Require register plugin first. Or throw Error
- * VueItemIndex only available when you provide `itemIndex` option when register plugin.
+ * VueItemIndex only available when you setup `vectorStore` option when register plugin.
  * */
 export const useVueItemIndex = () => {
-  const itemIndex = inject<ItemIndexStore>(PROVIDE_KEY.VUE_ITEM_INDEX)
+  const store = inject<ItemIndex>(PROVIDE_KEY.LAYER_STORE)
+  if (!store) {
+    throw new Error(
+      "VueItemIndex not provided. You should register plugin first.",
+    )
+  }
+
+  return store
+}
+
+/**
+ * Get global `VueLayerItemStore` instance. Require register plugin first. Or throw Error
+ * VueLayerItemStore only available when you setup `itemLayer.base` option when register plugin.
+ * */
+export const useVueLayerItemStore = () => {
+  const store = inject<LayerItemStore>(PROVIDE_KEY.LAYER_STORE)
+  if (!store) {
+    throw new Error(
+      "VueLayerItemStore not provided. You should register plugin first.",
+    )
+  }
+
+  return store
+}
+
+/**
+ * Get global `VueLayerItemIndex` instance. Require register plugin first. Or throw Error
+ * VueLayerItemIndex only available when you setup both `vectorStore` and `itemLayer.base` option when register plugin.
+ * */
+export const useVueLayerItemIndex = () => {
+  const itemIndex = inject<LayerItemIndex>(PROVIDE_KEY.LAYER_INDEX)
   if (!itemIndex) {
-    throw new Error("itemIndex not provided. You should register plugin first.")
+    throw new Error(
+      "VueLayerItemIndex not provided. You should register plugin first.",
+    )
   }
 
   return itemIndex

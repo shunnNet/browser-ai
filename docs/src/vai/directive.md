@@ -1,7 +1,7 @@
 # `v-ai` directive
-The `v-ai` directive can help you setup `data-ai-id` and `data-ai-description`. You can learn the usage of these 2 attributes at [BrowserNavigationAgent](../guide/browser-agent) page.
+The `v-ai` directive can help you setup `data-ai-id` and `data-ai-description`. You can learn the usage of these 2 attributes at [bai](../bai/bai) page.
 
-The `v-ai` provide almost same functionality with `BrowserNavigationAgent`, but `v-ai` directive automatically collect the DOM node and Vnode, you don't need to call `.collect()`. 
+The `v-ai` provide almost same functionality with `bai`, but `v-ai` directive automatically collect the DOM node and Vnode, you don't need to call `.collect()`. 
 
 
 ## Setup
@@ -45,12 +45,13 @@ const createVai = useCreateVai()
 const vai = createVai(openaiClient)
 
 onMounted(() => {
-  vai.check(`User: I want to play with ai !`)
+  vai.withContext(`User: I want to play with ai !`, async () => {
+    const element = await vai.whichElement("can fulfill user's purpose")
+    // { id, description, el, vnode }
+  
+    element.el.scrollIntoView()
 
-  const element = await vai.whichElement("can fulfill user's purpose")
-  // { id, description, el, vnode }
-
-  element.el.scrollIntoView()
+  })
 })
 
 </script>
@@ -74,9 +75,8 @@ For example, the following code:
 
 ```ts
 const navigation = async () => {
-  vai.check(`User: do you have any product ?`)
-
-  const route = await vai.whichRoute("can fulfill user's desire")
+  vai.withContext(`User: do you have any product ?`, async () => {
+    const route = await vai.whichRoute("can fulfill user's desire")
   if (!route){
     return
   }
@@ -90,6 +90,7 @@ const navigation = async () => {
   }
   element.ele.scrollIntoView()
   // ...
+  })
 }
 ```
 If the DOM node includes product info need wait api response, it is very possible the element haven't be rendered.

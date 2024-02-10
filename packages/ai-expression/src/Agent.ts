@@ -11,8 +11,8 @@ export type AgentClient = (message: {
 export type AgentChoice =
   | string
   | [string, () => any]
-  | [(...args: any) => any]
   | [string, any]
+  | ((...args: any) => any)
 
 export class Agent {
   public content: string
@@ -124,7 +124,7 @@ export class Agent {
   }
 
   async choice(question: string, choices: AgentChoice[]) {
-    let _default: any = () => null
+    let _default: () => any = () => null
     const _collection: Record<string, () => any> = {}
     for (const c of choices) {
       if (typeof c === "string") {
@@ -192,24 +192,25 @@ export class Agent {
 
   async categorize(
     question: string,
-    categories: ([string, AgentChoice[]] | (() => any))[],
+    categories: Record<string, AgentChoice[] | (() => any)> & {
+      fallback?: () => any
+    },
   ) {
     let _default: any = () => null
     const diction: Record<string, Record<string, any>> = {}
     const _normalizedCategories = []
 
-    for (const category of categories) {
-      if (typeof category === "function") {
-        _default = category
+    for (const [categoryName, choices] of Object.entries(categories)) {
+      if (categoryName === "fallback") {
+        _default = categories.fallback
         continue
       }
-      const [categoryName, items] = category
 
       const categoryStrategies: Record<string, any> = (diction[categoryName] =
         {})
       const _normalized: [string, string[]] = [categoryName, []]
 
-      for (const item of items) {
+      for (const item of choices as AgentChoice[]) {
         if (typeof item === "string") {
           categoryStrategies[item] = (r: any) => r
           _normalized[1].push(item)
@@ -236,6 +237,9 @@ export class Agent {
     let payload: any = []
     try {
       payload = JSON.parse(message)
+      if (!payload.length) {
+        throw new Error("I dont know")
+      }
     } catch (e) {
       return _default()
     }
@@ -251,27 +255,26 @@ export class Agent {
   }
 
   async chooseAndAnswer(
-    questionGroups: (
-      | [string, string[], ((args: any[]) => any)?]
-      | [() => any]
-    )[],
+    questionGroups: Record<
+      string,
+      { questions: string[]; handler?: (args: any[]) => any } | (() => any)
+    > & { fallback?: () => any },
   ) {
     const _normalized: any[] = []
     let _default = () => null
     const _handlerMap: Record<string, (args: string[]) => any> = {}
-    questionGroups.forEach((question) => {
-      if (typeof question[0] === "function") {
-        _default = question[0]
+    for (const [category, content] of Object.entries(questionGroups)) {
+      if (category === "fallback") {
+        _default = content as () => any
       } else {
-        const [questionGroup, answers, func] = question as [
-          string,
-          string[],
-          ((args: any[]) => any) | undefined,
-        ]
-        _normalized.push([questionGroup, answers])
-        _handlerMap[questionGroup] = func || ((r) => r)
+        const { questions, handler } = content as {
+          questions: string[]
+          handler?: (args: any[]) => any
+        }
+        _normalized.push([category, questions])
+        _handlerMap[category] = handler || ((r) => r)
       }
-    })
+    }
 
     const prompt = this.prompt.chooseAndAnswer(this.content, _normalized)
     const message = await this.logic(prompt)

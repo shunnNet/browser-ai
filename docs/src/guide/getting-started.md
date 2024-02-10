@@ -2,13 +2,13 @@
 To install package via package manager.
 
 ```sh
-pnpm install @browser-ai/ai-expression@0.4.3
+pnpm install @browser-ai/ai-expression
 ```
 
 ### Via **CDN**
 
 ```html
-<script src="https://unpkg.com/@browser-ai/ai-expression@0.4.3/dist/umd/index.js"></script>
+<script src="https://unpkg.com/@browser-ai/ai-expression/dist/umd/index.js"></script>
 <script>
 // Then access all features from `AiExpression`
 window.AiExpression
@@ -84,21 +84,23 @@ Finally, you can ask agent to `.check()` the conversation, and ask agent some qu
 ```ts
 // 1. Provide the information that you want the agent to assess.
 const checkIfUserWantToLogin = async () => {
-  agent.check(`
+  const content = `
 user: Hello
 ai: Hello! How can I assist you today ?
 user: I want to login
-`)
-  // 2. Call NL function
-  const userWantToLogin = await agent.does("user want to login")
-  console.log(userWantToLogin) 
-  // Typically, it would be `true`
-  if (userWantToLogin) {
-    showLoginModal()
-  }
-  // ...
+`
+  await agent.withContext(content, async () => {
+    // 2. Call NL function
+    const userWantToLogin = await agent.does("user want to login")
+    console.log(userWantToLogin) 
+    // Typically, it would be `true`
+    if (userWantToLogin) {
+      showLoginModal()
+    }
+    // ...
+  })
 }
 ```
 
 
-`.does()` is one of NL functions. There are other expression: `.is()`, `.whichIs()`. For more usage, check the [Agent](./agent)
+`.does()` is one of NL functions. There are other expression: `.choice()`, `.whichIs()`. For more usage, check the [Agent](./agent)

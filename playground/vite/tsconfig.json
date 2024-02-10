@@ -20,7 +20,9 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "../../packages/unplugin-ai-elements/ai-elements.d.ts"
+    // "./des.d.ts"
   ],
   "references": [
     {
