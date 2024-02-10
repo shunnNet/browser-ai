@@ -82,16 +82,16 @@ const router = useRouter()
 
 
 const navigation = async () => {
-  vai.check(`User: do you have any product ?`)
+  vai.withContext(`User: do you have any product ?`, async () => {  
+    const route = await vai.whichRoute("can fulfill user's desire")
+    // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
 
-  const route = await vai.whichRoute("can fulfill user's desire")
-  // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
-
-  if (route) {
-    router.push({ name: route.data.name })
-  } else {
-    // handle no route picked...
-  }
+    if (route) {
+      router.push({ name: route.data.name })
+    } else {
+      // handle no route picked...
+    }
+  })
 }
 ```
 
@@ -101,23 +101,23 @@ We can choose a route base on user's purpose. Navigate to the page may has helpf
 ```ts
 
 const navigation = async () => {
-  vai.check(`User: do you have any product ?`)
+  vai.withContext(`User: do you have any product ?`, async () => {
+    const route = await vai.whichRoute("can fulfill user's desire")
+    // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
+    if (!route){
+      // handle no route picked...
+      return
+    }
+    await router.push({ name: route.data.name })
 
-  const route = await vai.whichRoute("can fulfill user's desire")
-  // typically, the route will be { id: "Product", description: "This is the product page. User can see the product information and add the product to the cart." }
-  if (!route){
-    // handle no route picked...
-    return
-  }
-  await router.push({ name: route.data.name })
-
-  const element = await vai.whichElement("can fulfill user's desire")
-  if (!element){
-    // handle no element picked...
-    return
-  }
-  element.ele.scrollIntoView()
-  // ...
+    const element = await vai.whichElement("can fulfill user's desire")
+    if (!element){
+      // handle no element picked...
+      return
+    }
+    element.ele.scrollIntoView()
+    // ...
+  })
 }
 ```
 

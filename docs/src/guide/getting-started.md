@@ -79,7 +79,7 @@ const agent = new Agent(openaiClient)
 ```
 
 ## 3. Make expression
-Finally, you can ask agent to `.check()` the conversation, and ask agent some question using NL function `.does()`
+Finally, you can ask agent to check the conversation using `.withContext()`, and ask agent some question using NL function `.does()`
 
 ```ts
 // 1. Provide the information that you want the agent to assess.

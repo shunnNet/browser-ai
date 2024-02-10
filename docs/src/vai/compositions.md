@@ -39,17 +39,19 @@ const { conversation, addAgentMessage, addMessage, rawConversation, agentWatch }
 - `rawConversation`: For combining usage with `Vai` NL functions. This is computed result of `conversation`.
 
 ```ts
-vai.check(rawConversation.value)
-await vai.whichIs("user's purpose?")
+vai.withContext(rawConversation.value, async () => {
+  await vai.whichIs("user's purpose?")
 
-// rawConversation.value
-/**
- *    user: hello
-      ai: hello
-      cat: meow
-      function: User logined successfully
- * 
- */
+  // rawConversation.value
+  /**
+   *    user: hello
+        ai: hello
+        cat: meow
+        function: User logined successfully
+  * 
+  */
+})
+
 ```
 
 - `agentWatch`: Using vue `watch` to `addAgentMessage`. This is useful when you want to automatically add agent message base on state changed like `isLogin`.
