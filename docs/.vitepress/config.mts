@@ -24,10 +24,11 @@ export default defineConfig({
       },
       {
         text: "Usage",
-        items: [
-          { text: "Agent", link: "/guide/agent" },
-          { text: "BrowserAgent", link: "/guide/browser-agent" },
-        ],
+        items: [{ text: "Agent", link: "/guide/agent" }],
+      },
+      {
+        text: "Bai",
+        items: [{ text: "bai", link: "/bai/bai" }],
       },
 
       {
