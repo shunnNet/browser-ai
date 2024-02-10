@@ -1,9 +1,9 @@
 {
   "name": "@browser-ai/unplugin-ai-elements",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "",
-  "main": "index.js",
+  "main": "index.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c"
@@ -13,8 +13,8 @@
   "license": "ISC",
   "exports": {
     ".": {
-      "import": "./index.js",
-      "require": "./index.js"
+      "import": "./index.mjs",
+      "require": "./index.cjs"
     }
   },
   "dependencies": {

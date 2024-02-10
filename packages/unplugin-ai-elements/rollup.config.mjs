@@ -2,7 +2,7 @@
 import plugin from "./index.js"
 
 export default {
-  input: "./src/index.js", // resolved by our plugin
+  input: "./index.js", // resolved by our plugin
   plugins: [
     // typescript()
     plugin.rollup(),
