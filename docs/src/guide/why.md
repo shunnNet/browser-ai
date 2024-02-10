@@ -6,7 +6,7 @@ The primary goals of this project are:
 
 The explanations will be provided based on different packages:
 - `ai-expression`
-- `ai-vue`
+- `vai`
 
 ## Why - ai-expression
 > TL;DR: This package offers what I believe to be a better way to apply LLM in business logic.
@@ -91,7 +91,7 @@ If we ensure the prompt is simple, this delay should not be too fatal (consider 
 
 I believe this approach is better for combining business logic and providing fully conversational applications, at least until AI becomes powerful enough to overcome some of these challenges.
 
-## Why - ai-vue
+## Why - vai
 > The content below is about `Vue`, but similar concepts can be applied to `React`, `Svelte`, etc.
 
 I pondered on how frontend frameworks like `Vue` could integrate with LLM. I referred to [`ai-jsx`](https://docs.ai-jsx.com), I believe it is more focused on generating natural language; it looked cool. However, I focused on how to use it in a business app, emphasizing some auxiliary use cases:

@@ -1,19 +1,37 @@
-# `BrowserNavigationAgent`
-`BrowserNavigationAgent` is sub-class of `Agent`. Make sure you check [Agent's documentation](./agent).
+# `bai`
+`bai` is sub-class of `Agent`. Make sure you check [Agent's documentation](../guide/agent).
 
-`BrowserNavigationAgent` is a class that can be used for interaction between Model and web pages. It works by retrieving DOM nodes in the webpage that have the `data-ai-id` attribute and including them in the prompt.
+`bai` is a class that can be used for interaction between Model and web pages. It works by retrieving DOM nodes in the webpage that have the `data-ai-id` attribute and including them in the prompt.
 
-You can utilize the `BrowserNavigationAgent` to find the DOM node most relevant to the conversation text.
+You can utilize the `bai` to find the DOM node most relevant to the conversation text.
+
+## install
+
+```sh
+pnpm install @browser-ai/bai
+```
+
+### Via **CDN**
+
+```html
+<script src="https://unpkg.com/@browser-ai/bai/dist/umd/index.js"></script>
+<script>
+// Then access all features from `AiExpression`
+window.Bai
+window.Bai.Bai
+</script>
+```
+
 
 ## Usage
-`BrowserNavigationAgent` initialization is slightly different from `Agent`, it is recommended using static method `.create(client)`
+`bai` initialization is slightly different from `Agent`, it is recommended using static method `.create(client)`
 
 ```ts
-import { BrowserNavigationAgent } from "@browser-ai/ai-expression"
+import { Bai } from "@browser-ai/bai"
 import { openaiClient } from "./openaiClient"
 
 // init agent
-const agent = BrowserNavigationAgent.create(openaiClient)
+const bai = Bai.create(openaiClient)
 
 ```
 
@@ -31,20 +49,20 @@ To ask about elements, you need add `data-ai-id` attributes to element.
 </div>
 ```
 
-Then, you can collect element, and ask something to `BrowserNavigationAgent` by `.whichElement()`
+Then, you can collect element, and ask something to `bai` by `.whichElement()`
 
 ```ts
-//  Add conversation as source
-agent.check(`
-User: I want to play with ai !
-`)
-
 // collect elements with [data-ai-id]
-agent.collect()
+bai.collect()
 
-// element
-const element = await agent.whichElement("can fulfill user's purpose")
-// { el: div, id: 'actions', description: 'Buttons for interact with ai'}
+//  Add conversation as source
+bai.withContext(`
+User: I want to play with ai !
+`, async () => {
+  // element
+  const element = await bai.whichElement("can fulfill user's purpose")
+  // { el: div, id: 'actions', description: 'Buttons for interact with ai'}
+})
 ```
 
 The `.whichElement()` will return element id, description and DOM node, you can then do something (e.g: scroll to it) to the node.

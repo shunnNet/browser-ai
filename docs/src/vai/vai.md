@@ -4,7 +4,7 @@
 First, you need to install it.
 
 ```sh
-pnpm install @browser-ai/vai@0.4.0
+pnpm install @browser-ai/vai
 ```
 
 Then use it plugin.
@@ -31,7 +31,7 @@ Also support import via **CDN**
 ```html
 <!-- Load Vue first -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://unpkg.com/@browser-ai/vai@0.4.5/dist/umd/index.js"></script>
+<script src="https://unpkg.com/@browser-ai/vai/dist/umd/index.js"></script>
 <script>
 // Then access all features from `Vai`
 window.Vai
@@ -56,18 +56,16 @@ const vai = createVai(openaiClient)
 Then use it like `Agent`
 ```ts
 // Vai, check this content
-vai.check(`
+vai.withContext(`
 Dog: I don't want to play with ai !
 Cat: I want to play with ai !
 Panda: I just want to sleep !
-`)
+`, async () => {
+  // does "cat want to play with ai" ?
+  await vai.does("cat want to play with ai")
+  // typically be true
+})
 
-// does "cat want to play with ai" ?
-await vai.does("cat want to play with ai")
-// typically be true
-
-// After all done... Vai, forget it.
-vai.forget()
 ```
 
 ## Usage
