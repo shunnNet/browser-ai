@@ -3,10 +3,14 @@ import { Tool, ToolFunctionParams } from "./Tool"
 import { AgentEvent } from "./AgentEvent"
 import { Prompt } from "./prompt"
 
-export type AgentClient = (message: {
-  prompt: string
-  systemMessage?: string
-}) => Promise<string>
+export interface AgentClient {
+  expression(message: {
+    prompt: string
+    systemMessage?: string
+  }): Promise<string>
+
+  chat(message: string, options?: Record<string, any>): any
+}
 
 export type AgentChoice =
   | string
@@ -70,7 +74,7 @@ export class Agent {
   }
 
   async logic(prompt: string) {
-    const message = await this.client({
+    const message = await this.client.expression({
       prompt,
       systemMessage: this.systemMessage,
     })
@@ -318,7 +322,7 @@ export class Agent {
     }
     const prompt = this.prompt.pickTool(this.content, tools)
 
-    const response = await this.client({ prompt })
+    const response = await this.client.expression({ prompt })
     try {
       const parsed = JSON.parse(response) as {
         func: unknown
@@ -387,26 +391,30 @@ export class Agent {
   }
 
   async correction(wrong: string, correct: string) {
-    return await this.client({
+    return await this.client.expression({
       prompt: this.prompt.correction(wrong, correct),
     })
   }
 
   async correctionByChoice(wrong: string, choices: string[]) {
-    return await this.client({
+    return await this.client.expression({
       prompt: this.prompt.correctionChoice(wrong, choices),
     })
   }
 
   async correctionToJSON(wrong: string, hint?: string) {
-    return await this.client({
+    return await this.client.expression({
       prompt: this.prompt.correctionJSON(wrong, hint),
     })
   }
 
   async correctionWithSentencesRequired(wrong: string, sentences: string[]) {
-    return await this.client({
+    return await this.client.expression({
       prompt: this.prompt.correctionRequiredSentence(wrong, sentences),
     })
+  }
+
+  chat(message: string, options?: Record<string, any>) {
+    return this.client.chat(message, options)
   }
 }
