@@ -42,6 +42,11 @@ export class Agent {
     return this
   }
 
+  instruct(content: string) {
+    this.systemMessage = content
+    return this
+  }
+
   forget() {
     this.content = ""
     return this
