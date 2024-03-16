@@ -41,6 +41,19 @@ describe("Agent", () => {
       expect(agent.systemMessage).toBe(systemMessage)
     })
   })
+  describe("forget", () => {
+    let agent: Agent
+    let mockClient: MockClient
+
+    beforeEach(() => {
+      mockClient = new MockClient()
+      agent = new Agent(mockClient)
+    })
+    it("should unset the content property", () => {
+      agent.check("test content").forget()
+      expect(agent.content).toBe("")
+    })
+  })
 
   describe("withContext", () => {
     let agent: Agent
@@ -69,6 +82,19 @@ and reset after callback end execution.`, async () => {
         },
       )
 
+      expect(agent.content).toBe(fakePrompt)
+      expect(agent.systemMessage).toBe(fakePrompt)
+    })
+
+    it("should reset the content and systemMessage when callback throw", async () => {
+      expect(() =>
+        agent.withContext(
+          { content: inContextMessage, systemMessage: inContextMessage },
+          () => {
+            throw new Error("fail in callback")
+          },
+        ),
+      ).rejects.toThrow()
       expect(agent.content).toBe(fakePrompt)
       expect(agent.systemMessage).toBe(fakePrompt)
     })
@@ -199,6 +225,61 @@ And return one of choices when AgentClient return right answer second time.`, as
       client.expression.mockImplementation(() => "wrong")
       const r3 = await agent.yesNo(question, choices)
       expect(r3).toBe("failed")
+    })
+  })
+
+  describe("does", async () => {
+    const question = "question"
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      await agent.does(question)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/does-prompt.txt")
+      expect(systemMessage).toBe(fakePrompt)
+    })
+  })
+  describe("is", async () => {
+    const question = "question"
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      await agent.is(question)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/is-prompt.txt")
+      expect(systemMessage).toBe(fakePrompt)
+    })
+  })
+  describe("whichOneIs", async () => {
+    const question = "question"
+
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      const choices = ["choice1", "choice2"]
+
+      await agent.whichOneIs(question, choices)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/which-one-is-prompt.txt")
+      expect(systemMessage).toBe(fakePrompt)
     })
   })
 })
