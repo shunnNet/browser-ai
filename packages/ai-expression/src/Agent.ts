@@ -86,7 +86,7 @@ export class Agent {
     return message
   }
 
-  async yesNo(question: string, choices?: AgentChoice[]) {
+  async yesNo(question: string, choices?: unknown[]) {
     const validChoices = ["yes", "no"]
     let _choices: AgentChoice[] = [
       ["yes", true],
@@ -113,7 +113,7 @@ export class Agent {
         }
       }
       if (check.includes("yes") && check.includes("no")) {
-        _choices = choices
+        _choices = choices as AgentChoice[]
       } else {
         throw new Error(
           "yesNo choices must include 'yes' or 'no', got " + check,
@@ -124,11 +124,11 @@ export class Agent {
     return this.choice(question, _choices)
   }
 
-  async does(question: string, choices?: AgentChoice[]) {
+  async does(question: string, choices?: unknown[]) {
     return this.yesNo(`Does ${question}`, choices)
   }
 
-  async is(question: string, choices?: AgentChoice[]) {
+  async is(question: string, choices?: unknown[]) {
     return this.yesNo(`Is ${question}`, choices)
   }
 
@@ -192,7 +192,7 @@ export class Agent {
     }
   }
 
-  async whichOneIs(purpose: string, choices: AgentChoice[]) {
+  async whichOneIs(purpose: string, choices: unknown[]) {
     return this.choice(`Which one is ${purpose}`, choices)
   }
 
