@@ -132,8 +132,9 @@ export class Agent {
     return this.yesNo(`Is ${question}`, choices)
   }
 
-  async choice(question: string, choices: AgentChoice[]) {
-    let _default: () => any = () => null
+  async choice(question: string, choices: unknown[]) {
+    // TODO: make type more informative
+    let _default: CallableFunction = () => null
     const _collection: Record<string, () => any> = {}
     for (const c of choices) {
       if (typeof c === "string") {
