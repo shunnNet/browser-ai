@@ -138,4 +138,67 @@ And return one of choices when AgentClient return right answer second time.`, as
       expect(result).toBe(null)
     })
   })
+
+  describe("yesNo", async () => {
+    const question = "question"
+
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      await agent.yesNo(question)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/yesno-prompt.txt")
+      expect(systemMessage).toBe(fakePrompt)
+    })
+
+    it("should throw error if choice does not include both 'yes' and 'no'", async () => {
+      const { agent } = createAgent()
+      await expect(() => agent.yesNo(question, ["no"])).rejects.toThrow()
+      await expect(() => agent.yesNo(question, ["yes"])).rejects.toThrow()
+    })
+    it("should throw error if choice has value except 'yes' or 'no'", async () => {
+      const { agent } = createAgent()
+      await expect(() =>
+        agent.yesNo(question, ["yes", "no", "wrong"]),
+      ).rejects.toThrow()
+      await expect(() =>
+        agent.yesNo(question, ["yes", "no", ["wrong", () => true]]),
+      ).rejects.toThrow()
+    })
+    it("should respond corresponding value when 'yes' or 'no' is selected.", async () => {
+      const { agent: a1 } = createAgent(() => "yes")
+      const r1 = await a1.yesNo(question)
+      expect(r1).toBe(true)
+
+      const { agent: a2 } = createAgent(() => "no")
+      const r2 = await a2.yesNo(question)
+      expect(r2).toBe(false)
+    })
+
+    it("should receive choice handler", async () => {
+      const choices = [
+        // choices
+        ["yes", () => "T"],
+        ["no", "F"],
+        () => "failed",
+      ]
+      const { agent, client } = createAgent(() => "yes")
+      const r1 = await agent.yesNo(question, choices)
+      expect(r1).toBe("T")
+
+      client.expression.mockImplementation(() => "no")
+      const r2 = await agent.yesNo(question, choices)
+      expect(r2).toBe("F")
+
+      client.expression.mockImplementation(() => "wrong")
+      const r3 = await agent.yesNo(question, choices)
+      expect(r3).toBe("failed")
+    })
+  })
 })
