@@ -1,0 +1,31 @@
+Read the "Content" section, then anwser the question in "Question" section, fill your answer in "Answer" section and strictly follow the instructions in "Instruction" section.
+
+---Content---
+fakePrompt
+
+---Question---
+According to the "Content" section,  Choose 1 function and pass args for fulfilling the request.
+
+---Instruction---
+Choose 1 function from below, you MUST follow the JSON Schema when passing args to the function.
+
+--Function id:tool1--
+
+        Name: tool1
+        Type: Function
+        Description: {"name":"tool1","description":"tool1 description","parameters":{"type":"object","properties":{"name":{"type":"string"}}}}
+        
+
+--Function id:tool2--
+
+        Name: tool2
+        Type: Function
+        Description: {"name":"tool2","description":"tool2 description","parameters":{"type":"object","properties":{"name":{"type":"string"}}}}
+        
+
+---Anwser---
+{
+        "func": <function-id-to-be-call>
+        "args": <function-args>
+      }
+

@@ -1,0 +1,23 @@
+Read the "Content" section, then anwser the question in "Question" section, fill your answer in "Answer" section and strictly follow the instructions in "Instruction" section.
+
+---Content---
+fakePrompt
+
+---Question---
+According to the "Content" section,  Choose 1 category then answer all questions under the chosen category from below.
+purpose1, purpose2
+--purpose1 questions--
+user name
+user email
+user phone
+
+--purpose2 questions--
+game name
+user's age
+
+---Instruction---
+Answer by category and all its question's answer by JSON array like ["category", "answer1", "answer2", ...] with no any other words.
+
+---Anwser---
+
+

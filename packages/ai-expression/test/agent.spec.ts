@@ -1,5 +1,6 @@
 import { expect, vi, describe, it, beforeEach, Mock } from "vitest"
 import { Agent } from "../src/Agent"
+import { Tool } from "../src/Tool"
 
 class MockClient {
   expression: Mock
@@ -280,6 +281,311 @@ And return one of choices when AgentClient return right answer second time.`, as
 
       expect(prompt).toMatchFileSnapshot("./snapshots/which-one-is-prompt.txt")
       expect(systemMessage).toBe(fakePrompt)
+    })
+  })
+
+  describe("categorize", () => {
+    const question = "question"
+    const createCategories = () => {
+      return {
+        fruits: [
+          // fruits
+          "apple",
+          ["banana", () => "I love bananas!"],
+          () => "fallback",
+        ],
+        animals: [
+          // animals
+          ["dog", "I love dogs!"],
+          "cat",
+        ],
+        fallback: () => "No matching category found",
+      }
+    }
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      const categories = createCategories()
+
+      await agent.categorize(question, categories)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/categorize-prompt.txt")
+      expect(systemMessage).toBe(fakePrompt)
+    })
+
+    it("should return array of categorize result of the matching strategy when the callback value not specify", async () => {
+      const result = ["animals", "cat"]
+      const { agent } = createAgent(() => JSON.stringify(result))
+
+      const categories = createCategories()
+
+      const response = await agent.categorize(question, categories)
+
+      expect(response).toEqual(result)
+    })
+
+    it("should return the value of the matching strategy within a category when callback is value", async () => {
+      const { agent } = createAgent(() => JSON.stringify(["animals", "dog"]))
+
+      const categories = createCategories()
+
+      const result = await agent.categorize(question, categories)
+
+      expect(result).toBe("I love dogs!")
+    })
+
+    it("should return the callback returned value of the matching strategy within a category when callback is function", async () => {
+      const { agent } = createAgent(() => JSON.stringify(["fruits", "banana"]))
+      const categories = createCategories()
+
+      const result = await agent.categorize(question, categories)
+
+      expect(result).toBe("I love bananas!")
+    })
+
+    it("should return the result of the fallback function when no matching category is found", async () => {
+      const { agent } = createAgent(() => JSON.stringify(["wrong", "wrong"]))
+      const question = "What is your favorite color?"
+      const categories = createCategories()
+
+      const result = await agent.categorize(question, categories)
+
+      expect(result).toBe("No matching category found")
+    })
+
+    it("should return the result of the category fallback function when no matching choice in the category is found", async () => {
+      const { agent } = createAgent(() => JSON.stringify(["fruits", "wrong"]))
+      const categories = createCategories()
+
+      const result = await agent.categorize(question, categories)
+
+      expect(result).toBe("fallback")
+    })
+
+    it("should return categories level fallback function when client return invalid json", async () => {
+      const { agent } = createAgent(() => "['invalid json]")
+      const categories = createCategories()
+
+      const resposne = await agent.categorize(question, categories)
+      expect(resposne).toBe("No matching category found")
+    })
+  })
+  describe("chooseAndAnswer", () => {
+    const createChoices = () => {
+      return {
+        purpose1: {
+          questions: ["user name", "user email", "user phone"],
+          handler: vi.fn(),
+        },
+        purpose2: {
+          questions: ["game name", "user's age"],
+          handler: vi.fn(),
+        },
+        fallback: vi.fn(() => "No matching category found"),
+      }
+    }
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+
+    it("should call client.expression with correspnding prompt", async () => {
+      const { agent, client } = createAgent()
+      const choices = createChoices()
+
+      await agent.chooseAndAnswer(choices)
+      const { prompt, systemMessage } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot(
+        "./snapshots/choose-and-answer-prompt.txt",
+      )
+      expect(systemMessage).toBe(fakePrompt)
+    })
+
+    it("should parse the client response and call the corresponding handler", async () => {
+      const { agent } = createAgent(() =>
+        JSON.stringify(["purpose1", "name", "email", "phone"]),
+      )
+      const choices = createChoices()
+      choices.purpose1.handler.mockImplementation(() => "purpose1")
+
+      const reuslt = await agent.chooseAndAnswer(choices)
+
+      expect(choices.purpose1.handler).toHaveBeenCalledWith([
+        "purpose1",
+        "name",
+        "email",
+        "phone",
+      ])
+      expect(reuslt).toBe("purpose1")
+    })
+
+    it("should call the fallback handler if no match group of answer from client", async () => {
+      const { agent } = createAgent(() =>
+        JSON.stringify(["wrong", "name", "email", "phone"]),
+      )
+      const choices = createChoices()
+
+      const result = await agent.chooseAndAnswer(choices)
+
+      expect(choices.fallback).toHaveBeenCalled()
+      expect(result).toBe("No matching category found")
+    })
+
+    it("should call the fallback handler if the message cannot be parsed", async () => {
+      const { agent } = createAgent(
+        () => "[cannot parse this message to array]",
+      )
+      const choices = createChoices()
+
+      const result = await agent.chooseAndAnswer(choices)
+
+      expect(choices.fallback).toHaveBeenCalled()
+      expect(result).toBe("No matching category found")
+    })
+  })
+
+  describe("pickTool", () => {
+    const createSimgleTool = (name: string, validate: boolean = true) => {
+      return new Tool(
+        vi.fn(() => {}),
+        {
+          name,
+          description: `${name} description`,
+          parameters: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+            },
+          },
+        },
+        () => validate,
+      )
+    }
+    const createTools = () => {
+      return [createSimgleTool("tool1"), createSimgleTool("tool2", false)]
+    }
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correct prompt", async () => {
+      const { agent, client } = createAgent()
+      const tools = createTools()
+
+      await agent.pickTool(tools)
+      const { prompt } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/pick-tool-prompt.txt")
+    })
+    it("should return selected func, args and useIt function when client return valid result", async () => {
+      const { agent, client } = createAgent()
+      const tools = createTools()
+
+      client.expression.mockImplementation(() =>
+        JSON.stringify({ func: "tool1", args: { name: "tool1" } }),
+      )
+      const result = await agent.pickTool(tools)
+
+      expect(result.func).toBe(tools[0].name)
+      expect(result.args).toEqual({ name: "tool1" })
+      expect(result.useIt).toBeInstanceOf(Function)
+      expect(result.error).toBeUndefined()
+
+      result.useIt()
+      expect(tools[0].func).toHaveBeenCalledWith({ name: "tool1" })
+    })
+    it("should return result contain error message when tool.validate return false", async () => {
+      const { agent, client } = createAgent()
+      const tools = createTools()
+
+      client.expression.mockImplementation(() =>
+        JSON.stringify({ func: "tool2", args: { name: "tool1" } }),
+      )
+      const result = await agent.pickTool(tools)
+
+      expect(result.error).toBeTruthy()
+    })
+
+    it("should return result contain error message when client return invalid json", async () => {
+      const { agent, client } = createAgent()
+      const tools = createTools()
+
+      client.expression.mockImplementation(() => "[invalid json")
+      const result = await agent.pickTool(tools)
+
+      expect(result.error).toBeTruthy()
+    })
+    it("should return result contain error message when client return non exist func name", async () => {
+      const { agent, client } = createAgent()
+      const tools = createTools()
+
+      client.expression.mockImplementation(() =>
+        JSON.stringify({ func: "tool3", args: { name: "tool1" } }),
+      )
+      const result = await agent.pickTool(tools)
+
+      expect(result.error).toBeTruthy()
+    })
+  })
+
+  describe("correction", () => {
+    const createAgent = (expression?: any) => {
+      const client = new MockClient(expression)
+      const agent = new Agent(client)
+      agent.instruct(fakePrompt).check(fakePrompt)
+      return { agent, client }
+    }
+    it("should call client.expression with correspnding prompt when correction", async () => {
+      const { agent, client } = createAgent()
+      await agent.correction("wrong", "correct")
+      const { prompt } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot("./snapshots/correction-prompt.txt")
+    })
+    it("should call client.expression with correspnding prompt when correctionToJSON", async () => {
+      const { agent, client } = createAgent()
+      await agent.correctionToJSON("wrong", "correct")
+      const { prompt } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot(
+        "./snapshots/correction-json-prompt.txt",
+      )
+    })
+
+    it("should call client.expression with correspnding prompt when correctionWithSentencesRequired", async () => {
+      const { agent, client } = createAgent()
+      await agent.correctionWithSentencesRequired("wrong", [
+        "correct1",
+        "correct2",
+      ])
+      const { prompt } = client.expression.mock.calls[0][0]
+
+      expect(prompt).toMatchFileSnapshot(
+        "./snapshots/correction-with-sentences-required-prompt.txt",
+      )
+    })
+  })
+
+  describe("chat", () => {
+    it("should call client.chat with message and options", async () => {
+      const client = new MockClient()
+      const agent = new Agent(client)
+      const message = "test message"
+      const options = { option1: "option1" }
+      await agent.chat(message, options)
+
+      expect(client.chat).toHaveBeenCalledWith(message, options)
     })
   })
 })

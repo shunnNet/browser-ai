@@ -183,7 +183,7 @@ ${sentences.join("\n")}
     const primaryCategories = categories.map((c) => c[0]).join(", ")
     const secondaryCategories = categories
       .map((c) => `--${c[0]} secondary category--` + "\n" + c[1].join("\n"))
-      .join(", ")
+      .join("\n\n")
     return this.question(
       question,
       content,
