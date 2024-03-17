@@ -1,0 +1,23 @@
+Read the "Content" section, then anwser the question in "Question" section, fill your answer in "Answer" section and strictly follow the instructions in "Instruction" section.
+
+---Content---
+fakePrompt
+
+---Question---
+According to the "Content" section,  question
+
+---Instruction---
+Answer by 1 primary category, and 1 of its secondary category from below. You must answer by JSON array like ["primary", "secondary"] with no any other words. Answer [] if there is no suitable category.
+
+Primary categories: fruits, animals
+--fruits secondary category--
+apple
+banana
+
+--animals secondary category--
+dog
+cat
+
+---Anwser---
+
+

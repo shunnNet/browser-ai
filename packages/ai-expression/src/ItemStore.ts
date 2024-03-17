@@ -23,27 +23,23 @@ export const createItem = (
 }
 
 type ItemStoreEvent = {
-  create: { id: string; item: Item }
-  update: { id: string; item: Item }
-  delete: { id: string }
+  upsert: Item[]
+  delete: string[]
 }
 
 export class ItemStore {
   static fromStores(stores: ItemStore[]) {
-    return new ItemStore(stores.map((store) => store.getAllItems()).flat())
+    const s = new ItemStore()
+    s.setItems(stores.map((store) => store.getAllItems()).flat())
+    return s
   }
 
   protected _items: Record<string, Item> = {}
   public emitter: Emitter<ItemStoreEvent>
 
-  constructor(items?: Item[]) {
+  constructor() {
     this._items = {}
     this.emitter = mitt<ItemStoreEvent>()
-    if (Array.isArray(items)) {
-      items.forEach((item) => {
-        this.setItemById(item.id, item)
-      })
-    }
   }
 
   get items() {
@@ -59,20 +55,28 @@ export class ItemStore {
   }
 
   getItemById(id: string): Item {
-    return this.items[id]
+    return this.items[id] || null
+  }
+
+  setItems(items: Item[]) {
+    items.forEach((item) => {
+      this.items[item.id] = item
+    })
+    this.emitter.emit("upsert", items)
   }
 
   setItemById(id: string, item: Item) {
-    this.emitter.emit(id in this.items ? "create" : "update", { id, item })
+    this.emitter.emit("upsert", [item])
     this.items[id] = item
   }
 
   deleteItemById(id: string) {
-    this.emitter.emit("delete", { id })
+    this.emitter.emit("delete", [id])
     delete this.items[id]
   }
 }
 
+// TODO: may occur duplicate event when using ItemIndex with LayerItemIndex
 export class LayerItemStore {
   protected layers: Map<string, ItemStore>
 

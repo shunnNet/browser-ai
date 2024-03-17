@@ -86,7 +86,7 @@ export class Agent {
     return message
   }
 
-  async yesNo(question: string, choices?: AgentChoice[]) {
+  async yesNo(question: string, choices?: unknown[]) {
     const validChoices = ["yes", "no"]
     let _choices: AgentChoice[] = [
       ["yes", true],
@@ -113,7 +113,7 @@ export class Agent {
         }
       }
       if (check.includes("yes") && check.includes("no")) {
-        _choices = choices
+        _choices = choices as AgentChoice[]
       } else {
         throw new Error(
           "yesNo choices must include 'yes' or 'no', got " + check,
@@ -124,16 +124,17 @@ export class Agent {
     return this.choice(question, _choices)
   }
 
-  async does(question: string, choices?: AgentChoice[]) {
+  async does(question: string, choices?: unknown[]) {
     return this.yesNo(`Does ${question}`, choices)
   }
 
-  async is(question: string, choices?: AgentChoice[]) {
+  async is(question: string, choices?: unknown[]) {
     return this.yesNo(`Is ${question}`, choices)
   }
 
-  async choice(question: string, choices: AgentChoice[]) {
-    let _default: () => any = () => null
+  async choice(question: string, choices: unknown[]) {
+    // TODO: make type more informative
+    let _default: CallableFunction = () => null
     const _collection: Record<string, () => any> = {}
     for (const c of choices) {
       if (typeof c === "string") {
@@ -191,7 +192,7 @@ export class Agent {
     }
   }
 
-  async whichOneIs(purpose: string, choices: AgentChoice[]) {
+  async whichOneIs(purpose: string, choices: unknown[]) {
     return this.choice(`Which one is ${purpose}`, choices)
   }
 
@@ -201,16 +202,19 @@ export class Agent {
 
   async categorize(
     question: string,
-    categories: Record<string, AgentChoice[] | (() => any)> & {
+    categories: Record<string, unknown[] | (() => any)> & {
       fallback?: () => any
     },
   ) {
-    let _default: any = () => null
+    let _default: CallableFunction = () => null
     const diction: Record<string, Record<string, any>> = {}
     const _normalizedCategories = []
 
     for (const [categoryName, choices] of Object.entries(categories)) {
-      if (categoryName === "fallback") {
+      if (
+        categoryName === "fallback" &&
+        typeof categories.fallback === "function"
+      ) {
         _default = categories.fallback
         continue
       }
@@ -219,7 +223,7 @@ export class Agent {
         {})
       const _normalized: [string, string[]] = [categoryName, []]
 
-      for (const item of choices as AgentChoice[]) {
+      for (const item of choices as unknown[]) {
         if (typeof item === "string") {
           categoryStrategies[item] = (r: any) => r
           _normalized[1].push(item)
@@ -232,14 +236,15 @@ export class Agent {
             _normalized[1].push(item[0])
           } else if (item.length > 1) {
             categoryStrategies[item[0]] = () => item[1] as any
+            _normalized[1].push(item[0])
           }
         }
       }
       _normalizedCategories.push(_normalized)
     }
     const prompt = this.prompt.categrorize(
-      question,
       this.content,
+      question,
       _normalizedCategories,
     )
     const message = await this.logic(prompt)
@@ -335,6 +340,7 @@ export class Agent {
       }
       const selectedTool = tools.find((t) => t.name === parsed.func)
 
+      // TODO: should not validate args, let it validated by tool itself
       if (
         typeof parsed.func === "string" &&
         selectedTool &&

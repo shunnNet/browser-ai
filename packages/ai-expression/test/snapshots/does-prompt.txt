@@ -1,0 +1,14 @@
+Read the "Content" section, then anwser the question in "Question" section, fill your answer in "Answer" section and strictly follow the instructions in "Instruction" section.
+
+---Content---
+fakePrompt
+
+---Question---
+According to the "Content" section,  Does question
+
+---Instruction---
+You must answer with one of these: "yes","no" with no other words. If you don't know, anwser "I dont know"
+
+---Anwser---
+
+
